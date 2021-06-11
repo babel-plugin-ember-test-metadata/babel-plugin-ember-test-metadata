@@ -9,7 +9,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
   some.otherThing(function () {
     noop();
   });
-  beforeEach(function () {
+  hooks.beforeEach(function () {
     let testMetadata = getTestMetadata(this);
     testMetadata.filePath =
       'test/__fixtures__/nested-modules-with-beforeeach-import-exists-code.js';

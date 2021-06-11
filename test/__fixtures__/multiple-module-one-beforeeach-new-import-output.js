@@ -9,7 +9,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
   some.otherThing(function () {
     noop();
   });
-  beforeEach(function () {
+  hooks.beforeEach(function () {
     let testMetadata = getTestMetadata(this);
     testMetadata.filePath =
       'test/__fixtures__/multiple-module-one-beforeeach-new-import-code.js';
@@ -26,7 +26,7 @@ module('Acceptance | search acceptance test', function (hooks) {
   some.otherThing(function () {
     noop();
   });
-  beforeEach(function () {
+  hooks.beforeEach(function () {
     let testMetadata = getTestMetadata(this);
     testMetadata.filePath =
       'test/__fixtures__/multiple-module-one-beforeeach-new-import-code.js';

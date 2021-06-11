@@ -12,7 +12,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
     noop();
   })
 
-  beforeEach(function () {
+  hooks.beforeEach(function () {
     const myConst = 0;
     noop();
     // do some things here
