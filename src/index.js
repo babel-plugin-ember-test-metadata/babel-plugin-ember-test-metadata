@@ -88,10 +88,8 @@ export function addMetadata({ types: t }) {
           imp => imp.source.value === EMBER_TEST_HELPERS
         );
 
-        importExists =
-          emberTestHelpers !== undefined && emberTestHelpers.length;
-
-        if (importExists) {
+        if (emberTestHelpers.length > 0) {
+          // Append to existing test-helpers import
           emberTestHelpers[0].specifiers.push(t.identifier(GET_TEST_METADATA));
         } else {
           const getTestMetaDataImportSpecifier = t.importSpecifier(
@@ -102,13 +100,13 @@ export function addMetadata({ types: t }) {
             [getTestMetaDataImportSpecifier],
             t.stringLiteral(EMBER_TEST_HELPERS)
           );
-          // TODO: Refactor to insert import after last existing import statement
-          babelPath.unshiftContainer('body', getTestMetaDataImportDeclaration);
+
+          // Add new import statement below all others
+          node.body.splice(imports.length, 0, getTestMetaDataImportDeclaration);
         }
       },
 
-      CallExpression(babelPath, state) {
-        // TODO: Refactor to properly use state.opts
+      CallExpression(babelPath) {
         // Reset at top-level module
         if (babelPath.scope.block.type === 'Program')
           beforeEachModified = false;

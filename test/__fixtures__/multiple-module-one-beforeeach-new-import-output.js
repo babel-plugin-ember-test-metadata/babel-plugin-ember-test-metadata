@@ -1,6 +1,6 @@
-import { getTestMetadata } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
+import { getTestMetadata } from '@ember/test-helpers';
 const SELECTORS = Object.freeze({
   MOCK_SELECTOR: '[data-test-nav-bar-browse]',
 });
