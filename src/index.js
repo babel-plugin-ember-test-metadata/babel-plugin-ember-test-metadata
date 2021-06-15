@@ -1,76 +1,55 @@
 const path = require('path');
 
 /**
- * Get the relative file path of the current file being operated on
- * @param {object} state - Babel state
- * @returns String
- */
-function getFilePath(state) {
-  const filePath = state.file.opts.filename;
-  const { root } = state.file.opts;
-  return path.relative(root, filePath);
-}
-
-/**
  * Write the test metadata expressions to the body of the node
  * @param {object} state - Babel state
  * @param {object} node - Babel node
- * @param {object} types  - Babel types
+ * @param {object} t  - Babel types
  */
-function writeTestMetadataExpressions(state, node, types) {
-  const testMetadataVarDeclaration = getTestMetadataDeclaration(types);
-  const testMetadataAssignment = getTestMetadataAssignment(state, types);
+function writeTestMetadataExpressions(state, node, t) {
+  const testMetadataVarDeclaration = getTestMetadataDeclaration(t);
+  const testMetadataAssignment = getTestMetadataAssignment(state, t);
+  const { body } = node.arguments[0].body;
 
-  node.arguments[0].body.body.unshift(testMetadataAssignment);
-  node.arguments[0].body.body.unshift(testMetadataVarDeclaration);
+  body.unshift(testMetadataAssignment);
+  body.unshift(testMetadataVarDeclaration);
 }
 
 /**
  * Get the test metadata assignment expression
  * @param {object} state - Babel state
- * @param {object} types  - Babel types
+ * @param {object} t  - Babel types
  * @returns Babel assignment expression
  */
-function getTestMetadataAssignment(state, types) {
-  const relativeFilePath = getFilePath(state);
-  const filePathStr = types.stringLiteral(relativeFilePath);
-  return types.assignmentExpression(
+function getTestMetadataAssignment(state, t) {
+  const { root, filename } = state.file.opts;
+  const relativeFilePath = path.relative(root, filename);
+  const filePathStr = t.stringLiteral(relativeFilePath);
+
+  return t.assignmentExpression(
     '=',
-    types.memberExpression(
-      types.identifier('testMetadata'),
-      types.identifier('filePath')
-    ),
+    t.memberExpression(t.identifier('testMetadata'), t.identifier('filePath')),
     filePathStr
   );
 }
 
 /**
  * Get the test metadata variable declaration
- * @param {object} types - Babel types
+ * @param {object} t - Babel types
  * @returns Babel variable declaration
  */
-function getTestMetadataDeclaration(types) {
-  const getTestMetadataCall = types.callExpression(
-    types.identifier('getTestMetadata'),
-    [types.thisExpression()]
+function getTestMetadataDeclaration(t) {
+  const getTestMetadataExpression = t.callExpression(
+    t.identifier('getTestMetadata'),
+    [t.thisExpression()]
   );
-  return types.variableDeclaration('let', [
-    types.variableDeclarator(
-      types.identifier('testMetadata'),
-      getTestMetadataCall
+
+  return t.variableDeclaration('let', [
+    t.variableDeclarator(
+      t.identifier('testMetadata'),
+      getTestMetadataExpression
     ),
   ]);
-}
-
-/**
- * Get an array of import declaration nodes
- * @param {object} node - Babel node
- * @returns Array of import decalaration nodes
- */
-function getImportDeclarations(node) {
-  return node.body.filter(maybeImport => {
-    return maybeImport.type === 'ImportDeclaration';
-  });
 }
 
 /**
@@ -103,7 +82,9 @@ export function addMetadata({ types: t }) {
       Program(babelPath) {
         const EMBER_TEST_HELPERS = '@ember/test-helpers';
         const GET_TEST_METADATA = 'getTestMetadata';
-        const imports = getImportDeclarations(babelPath.node);
+        const imports = babelPath.node.body.filter(maybeImport => {
+          return maybeImport.type === 'ImportDeclaration';
+        });
         const emberTestHelpers = imports.filter(
           imp => imp.source.value === EMBER_TEST_HELPERS
         );
