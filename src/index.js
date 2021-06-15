@@ -24,12 +24,11 @@ function writeTestMetadataExpressions(state, node, t) {
 function getTestMetadataAssignment(state, t) {
   const { root, filename } = state.file.opts;
   const relativeFilePath = path.relative(root, filename);
-  const filePathStr = t.stringLiteral(relativeFilePath);
 
   return t.assignmentExpression(
     '=',
     t.memberExpression(t.identifier('testMetadata'), t.identifier('filePath')),
-    filePathStr
+    t.stringLiteral(relativeFilePath)
   );
 }
 
