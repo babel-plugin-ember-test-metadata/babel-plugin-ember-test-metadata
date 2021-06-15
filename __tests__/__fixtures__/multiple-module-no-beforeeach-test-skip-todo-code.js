@@ -13,7 +13,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
     noop();
   })
 
-  skip('it renders browse page', async function (assert) {
+  test.only('it renders browse page', async function (assert) {
     await visit(BROWSE_URL);
     assert.dom(SELECTORS.MOCK_SELECTOR).exists();
   });
@@ -26,7 +26,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
     noop();
   })
 
-  todo('it renders browse page', async function (assert) {
+  test.skip('it renders browse page', async function (assert) {
     await visit(BROWSE_URL);
     assert.dom(SELECTORS.MOCK_SELECTOR).exists();
   });

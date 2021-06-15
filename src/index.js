@@ -1,18 +1,42 @@
 const path = require('path');
 
 /**
- * Write the test metadata expressions to the body of the node
+ * Write the test metadata expressions either into the body of the existing beforeEach, or
+ * wrapped in a new beforeEach which is inserted just above the given babelPath
  * @param {object} state - Babel state
- * @param {object} node - Babel node
+ * @param {object} babelPath - Babel path
  * @param {object} t  - Babel types
+ * @param {boolean} hasBeforeEach  - if true, write expressions into existing beforeEach,
+ *   otherwise write a new beforeEach
  */
-function writeTestMetadataExpressions(state, node, t) {
+ function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
   const testMetadataVarDeclaration = getTestMetadataDeclaration(t);
   const testMetadataAssignment = getTestMetadataAssignment(state, t);
-  const { body } = node.arguments[0].body;
 
-  body.unshift(testMetadataAssignment);
-  body.unshift(testMetadataVarDeclaration);
+  if (hasBeforeEach) {
+    const { body } = babelPath.node.arguments[0].body;
+
+    body.unshift(testMetadataAssignment);
+    body.unshift(testMetadataVarDeclaration);
+  } else {
+    const beforeEachFunc = t.functionExpression(
+      null,
+      [],
+      t.blockStatement([
+        testMetadataVarDeclaration,
+        t.expressionStatement(testMetadataAssignment),
+      ])
+    );
+    const beforeEachExpression = t.callExpression(
+      t.memberExpression(
+        t.identifier('hooks'),
+        t.identifier('beforeEach')
+      ),
+      [beforeEachFunc]
+    );
+
+    babelPath.insertBefore(beforeEachExpression);
+  }
 }
 
 /**
@@ -55,18 +79,8 @@ function getTestMetadataDeclaration(t) {
  * Babel plugin for Ember apps that adds the filepath of the test file that Babel is processing, to
  * the testMetadata. It does this by making the following transformations to the test file:
  * 1. imports "getTestMetadata" from @ember/test-helpers
- * 2. adds a new beforeEach or modifies any existing beforeEach to include testMetadata expressions that add
+ * 2. adds a new beforeEach or transforms any existing beforeEach to include testMetadata expressions that add
  *   filepath to testMetadata
- * e.g. The transformed beforeEach would look like:
-          hooks.beforeEach(function () {
-            let testMetadata = getTestMetadata(this);
-            testMetadata.filePath =
-              'test/__fixtures__/one-module-no-beforeeach-test-member-code.js';
-          });
- * Only 1 beforeEach should apply for each top-level module (in Qunit there can be sibling and/or nested modules),
- * and so only 1 top-level beforeEach will be added/transformed. It will be added just before any calls to
- * "test() or module()" which places it after any setup-based expressions.
- *
  * @param {object} Babel object
  * @returns Babel plugin object with Program and CallExpression visitors
  */
@@ -106,52 +120,49 @@ export function addMetadata({ types: t }) {
         }
       },
 
+      /**
+       * Do transforms for adding our test metadata expressions to beforeEach.
+       * For each top-level module (in QUnit there can be sibling and/or nested modules), only 1 beforeEach should apply,
+       * and so only 1 beforeEach will be added/transformed per top-level module. As Babel traverses through each call
+       * expression, we're only concerned about operating on call expressions inside of top-level module calls.
+       *
+       * While inside a top-level module, we check the current call expression for either of these conditions:
+       *   1. if it's a beforeEach, then we add our test metadata expressions to it.
+       *   2. if it's a call to either "test" or to a nested "module", then we want to add a new beforeEach just above it
+       * If the current call is neither of these, then do nothing. Babel will move on to the next call expression.
+       *
+       * The transformed beforeEach would look like:
+          hooks.beforeEach(function () {
+            let testMetadata = getTestMetadata(this);
+            testMetadata.filePath = 'test/my-test.js';
+          });
+       * @param {object} babelPath
+       * @param {object} state
+       */
       CallExpression(babelPath, state) {
-        // Reset at top-level module
-        if (babelPath.scope.block.type === 'Program')
-          beforeEachModified = false;
+        // If we're at a top-level call expression, then we reset the beforeEachModified state to false, and let Babel
+        // move on to the next call expression.
+        if (babelPath.scope.block.type === 'Program') {
+          state.opts.beforeEachModified = false;
+          return;
+        }
 
-        if (!beforeEachModified) {
-          const BEFORE_EACH = 'beforeEach';
-          // TODO: Refactor, remove skip and todo as these are not primary calls
-          const testMethodNames = ['test', 'skip', 'todo', 'module'];
+        if (!state.opts.beforeEachModified) {
+          const hasBeforeEach =
+            babelPath.node.callee.property &&
+            babelPath.node.callee.property.name === 'beforeEach';
+          const testMethodCalls = ['test', 'module'];
           const nodeName =
             babelPath.node.callee.name || babelPath.node.callee.object.name;
-          const shouldAddToExistingBeforeEach =
-            babelPath.node.callee.property &&
-            babelPath.node.callee.property.name === BEFORE_EACH;
-
-          if (shouldAddToExistingBeforeEach) {
-            writeTestMetadataExpressions(state, babelPath.node, t);
-            beforeEachModified = true;
-          } else if (
-            // TODO: refactor out during state.opts and skip/todo clean-up
-            testMethodNames.includes(nodeName) &&
+          const isFirstChildTestMethodCall =
+            testMethodCalls.includes(nodeName) &&
             babelPath.scope.path.parentPath &&
-            babelPath.scope.path.parentPath.node.callee.name === 'module'
-          ) {
-            const testMetadataVarDeclaration = getTestMetadataDeclaration(t);
-            const testMetadataAssignment = getTestMetadataAssignment(state, t);
-            const beforeEachFunc = t.functionExpression(
-              null,
-              [],
-              t.blockStatement([
-                testMetadataVarDeclaration,
-                t.expressionStatement(testMetadataAssignment),
-              ])
-            );
-            const beforeEach = t.callExpression(
-              t.memberExpression(
-                t.identifier('hooks'),
-                t.identifier(BEFORE_EACH)
-              ),
-              [beforeEachFunc]
-            );
+            babelPath.scope.path.parentPath.node.callee.name === 'module';
+          const shouldDoTransform = hasBeforeEach || isFirstChildTestMethodCall;
 
-            // TODO: Refactor/clean-up during skip/todo work, to clarify what "babelPath.insertBefore()" is doing.
-            babelPath.insertBefore(beforeEach);
-
-            beforeEachModified = true;
+          if (shouldDoTransform) {
+            writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach);
+            state.opts.beforeEachModified = true;
           }
         }
       },

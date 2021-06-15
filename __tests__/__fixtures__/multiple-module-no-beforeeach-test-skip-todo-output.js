@@ -14,7 +14,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
     testMetadata.filePath =
       '__tests__/__fixtures__/multiple-module-no-beforeeach-test-skip-todo-code.js';
   });
-  skip('it renders browse page', async function (assert) {
+  test.only('it renders browse page', async function (assert) {
     await visit(BROWSE_URL);
     assert.dom(SELECTORS.MOCK_SELECTOR).exists();
   });
@@ -29,7 +29,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
     testMetadata.filePath =
       '__tests__/__fixtures__/multiple-module-no-beforeeach-test-skip-todo-code.js';
   });
-  todo('it renders browse page', async function (assert) {
+  test.skip('it renders browse page', async function (assert) {
     await visit(BROWSE_URL);
     assert.dom(SELECTORS.MOCK_SELECTOR).exists();
   });
