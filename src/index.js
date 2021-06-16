@@ -86,8 +86,10 @@ export function addMetadata({ types: t }) {
         const emberTestHelpers = imports.filter(
           imp => imp.source.value === EMBER_TEST_HELPERS
         );
+        const importExists =
+          emberTestHelpers !== undefined && emberTestHelpers.length > 0;
 
-        if (emberTestHelpers.length > 0) {
+        if (importExists) {
           // Append to existing test-helpers import
           emberTestHelpers[0].specifiers.push(t.identifier(GET_TEST_METADATA));
         } else {
@@ -100,7 +102,6 @@ export function addMetadata({ types: t }) {
             t.stringLiteral(EMBER_TEST_HELPERS)
           );
 
-          // Add new import statement below all others
           node.body.splice(imports.length, 0, getTestMetaDataImportDeclaration);
         }
       },
