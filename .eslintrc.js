@@ -3,7 +3,7 @@ module.exports = {
     browser: false,
     node: true
   },
-  plugins: ['node'],
+  plugins: ['node', 'prettier'],
   extends: [
     'eslint:recommended',
     'plugin:node/recommended',
