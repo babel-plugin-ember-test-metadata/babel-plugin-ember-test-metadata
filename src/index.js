@@ -9,12 +9,12 @@ const path = require('path');
  * @param {boolean} hasBeforeEach  - if true, write expressions into existing beforeEach,
  *   otherwise write a new beforeEach
  */
- function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
+function writeTestMetadataExpressions (state, babelPath, t, hasBeforeEach) {
   const testMetadataVarDeclaration = getTestMetadataDeclaration(t);
   const testMetadataAssignment = getTestMetadataAssignment(state, t);
 
   if (hasBeforeEach) {
-    const { body } = babelPath.node.arguments[0].body;
+    const {body} = babelPath.node.arguments[0].body;
 
     body.unshift(testMetadataAssignment);
     body.unshift(testMetadataVarDeclaration);
@@ -45,8 +45,8 @@ const path = require('path');
  * @param {object} t  - Babel types
  * @returns Babel assignment expression
  */
-function getTestMetadataAssignment(state, t) {
-  const { root, filename } = state.file.opts;
+function getTestMetadataAssignment (state, t) {
+  const {root, filename} = state.file.opts;
   const relativeFilePath = path.relative(root, filename);
 
   return t.assignmentExpression(
@@ -61,7 +61,7 @@ function getTestMetadataAssignment(state, t) {
  * @param {object} t - Babel types
  * @returns Babel variable declaration
  */
-function getTestMetadataDeclaration(t) {
+function getTestMetadataDeclaration (t) {
   const getTestMetadataExpression = t.callExpression(
     t.identifier('getTestMetadata'),
     [t.thisExpression()]
@@ -84,14 +84,11 @@ function getTestMetadataDeclaration(t) {
  * @param {object} Babel object
  * @returns Babel plugin object with Program and CallExpression visitors
  */
-export function addMetadata({ types: t }) {
-  // TODO: Refactor to properly use state.opts
-  let beforeEachModified = false;
-
+function addMetadata ({types: t}) {
   return {
     name: 'addMetadata',
     visitor: {
-      Program({ node }) {
+      Program ({node}) {
         const EMBER_TEST_HELPERS = '@ember/test-helpers';
         const GET_TEST_METADATA = 'getTestMetadata';
         const imports = node.body.filter(maybeImport => {
@@ -139,7 +136,7 @@ export function addMetadata({ types: t }) {
        * @param {object} babelPath
        * @param {object} state
        */
-      CallExpression(babelPath, state) {
+      CallExpression (babelPath, state) {
         // If we're at a top-level call expression, then we reset the beforeEachModified state to false, and let Babel
         // move on to the next call expression.
         if (babelPath.scope.block.type === 'Program') {
@@ -169,3 +166,5 @@ export function addMetadata({ types: t }) {
     },
   };
 }
+
+module.exports = addMetadata;

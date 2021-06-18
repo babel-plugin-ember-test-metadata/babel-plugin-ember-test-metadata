@@ -1,5 +1,5 @@
 const pluginTester = require('babel-plugin-tester').default;
-const { addMetadata } = require('../src/index');
+const addMetadata = require('../src/index');
 const path = require('path');
 
 pluginTester({
