@@ -9,7 +9,7 @@ const path = require('path');
  * @param {boolean} hasBeforeEach  - if true, write expressions into existing beforeEach,
  *   otherwise write a new beforeEach
  */
- function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
+function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
   const testMetadataVarDeclaration = getTestMetadataDeclaration(state, t);
   const testMetadataAssignment = getTestMetadataAssignment(state, t);
 
@@ -20,7 +20,9 @@ const path = require('path');
     let existingMetadataDeclaration;
 
     if (functionBlockBodyStatementsArray.length > 0) {
-      existingMetadataDeclaration = functionBlockBodyStatementsArray.find(hasMetadataDeclaration);
+      existingMetadataDeclaration = functionBlockBodyStatementsArray.find(
+        hasMetadataDeclaration
+      );
     }
 
     if (!existingMetadataDeclaration) {
@@ -31,11 +33,15 @@ const path = require('path');
     const beforeEachFunc = t.functionExpression(
       null,
       [],
-      t.blockStatement([testMetadataVarDeclaration, t.expressionStatement(testMetadataAssignment)])
+      t.blockStatement([
+        testMetadataVarDeclaration,
+        t.expressionStatement(testMetadataAssignment),
+      ])
     );
-    const beforeEachExpression = t.callExpression(t.memberExpression(t.identifier('hooks'), t.identifier('beforeEach')), [
-      beforeEachFunc
-    ]);
+    const beforeEachExpression = t.callExpression(
+      t.memberExpression(t.identifier('hooks'), t.identifier('beforeEach')),
+      [beforeEachFunc]
+    );
 
     babelPath.insertBefore(beforeEachExpression);
   }
@@ -114,17 +120,25 @@ function addMetadata({ types: t }) {
           return;
         }
 
-        let importDeclarations = babelPath.get('body').filter((n) => n.type === 'ImportDeclaration');
+        let importDeclarations = babelPath
+          .get('body')
+          .filter((n) => n.type === 'ImportDeclaration');
         let emberTestHelpersIndex = importDeclarations.findIndex(
           (n) => n.get('source').get('value').node === '@ember/test-helpers'
         );
 
-        state.opts.getTestMetadataUID = babelPath.scope.generateUidIdentifier(GET_TEST_METADATA);
-        const getTestMetaDataImportSpecifier = t.importSpecifier(state.opts.getTestMetadataUID, t.identifier(GET_TEST_METADATA));
+        state.opts.getTestMetadataUID =
+          babelPath.scope.generateUidIdentifier(GET_TEST_METADATA);
+        const getTestMetaDataImportSpecifier = t.importSpecifier(
+          state.opts.getTestMetadataUID,
+          t.identifier(GET_TEST_METADATA)
+        );
 
         if (emberTestHelpersIndex > 0) {
           // Append to existing test-helpers import
-          importDeclarations[emberTestHelpersIndex].get('body').container.specifiers.push(getTestMetaDataImportSpecifier);
+          importDeclarations[emberTestHelpersIndex]
+            .get('body')
+            .container.specifiers.push(getTestMetaDataImportSpecifier);
         } else {
           const getTestMetaDataImportDeclaration = t.importDeclaration(
             [getTestMetaDataImportSpecifier],
