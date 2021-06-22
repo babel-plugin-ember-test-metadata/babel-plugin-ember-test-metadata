@@ -1,0 +1,647 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`addMetadata for a module that already imports from @ember/test-helpers, it adds getTestMetadata to the import: for a module that already imports from @ember/test-helpers, it adds getTestMetadata to the import 1`] = `
+
+import {module, test} from 'qunit';
+import {setupApplicationTest} from 'ember-qunit';
+import { click, visit } from '@ember/test-helpers';
+
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  some.otherThing(function () {
+    noop();
+  })
+
+  hooks.beforeEach(function () {
+    const myConst = 0;
+    noop();
+    // do some things here
+  });
+
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import {
+  click,
+  visit,
+  getTestMetadata as _getTestMetadata,
+} from '@ember/test-helpers';
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/one-module-one-beforeeach-import-exists-input-test.js';
+    const myConst = 0;
+    noop(); // do some things here
+  });
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+
+`;
+
+exports[`addMetadata for a single beforeEach in a single module, it adds a new import and getTestMetadata statements: for a single beforeEach in a single module, it adds a new import and getTestMetadata statements 1`] = `
+
+import {module, test} from 'qunit';
+import {setupApplicationTest} from 'ember-qunit';
+
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  some.otherThing(function () {
+    noop();
+  })
+
+  hooks.beforeEach(function () {
+    const myConst = 0;
+    noop();
+    // do some things here
+  });
+
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { getTestMetadata as _getTestMetadata } from '@ember/test-helpers';
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/one-module-one-beforeeach-new-import-input-test.js';
+    const myConst = 0;
+    noop(); // do some things here
+  });
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+
+`;
+
+exports[`addMetadata for a single module without any beforeEach and a memberExpression test call,
+       it adds a new beforeEach & getTestMetadata statements: for a single module without any beforeEach and a memberExpression test call,
+       it adds a new beforeEach & getTestMetadata statements 1`] = `
+
+import {module, test} from 'qunit';
+import {setupApplicationTest} from 'ember-qunit';
+import { click, visit } from '@ember/test-helpers';
+
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  some.otherThing(function () {
+    noop();
+  })
+
+  test.only('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import {
+  click,
+  visit,
+  getTestMetadata as _getTestMetadata,
+} from '@ember/test-helpers';
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/one-module-no-beforeeach-test-member-input-test.js';
+  });
+  test.only('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+
+`;
+
+exports[`addMetadata for a single module without any beforeEach, it adds a new beforeEach & getTestMetadata statements: for a single module without any beforeEach, it adds a new beforeEach & getTestMetadata statements 1`] = `
+
+import {module, test} from 'qunit';
+import {setupApplicationTest} from 'ember-qunit';
+import { click, visit } from '@ember/test-helpers';
+
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  some.otherThing(function () {
+    noop();
+  })
+
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import {
+  click,
+  visit,
+  getTestMetadata as _getTestMetadata,
+} from '@ember/test-helpers';
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/one-module-no-beforeeach-import-exists-input-test.js';
+  });
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+
+`;
+
+exports[`addMetadata for beforeEach in multiple modules, it adds a new import and multiple getTestMetadata statements: for beforeEach in multiple modules, it adds a new import and multiple getTestMetadata statements 1`] = `
+
+import {module, test} from 'qunit';
+import {setupApplicationTest} from 'ember-qunit';
+
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  some.otherThing(function () {
+    noop();
+  })
+
+  hooks.beforeEach(function () {
+    const myConst = 0;
+    noop();
+    // do some things here
+  });
+
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+module('Acceptance | search acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  some.otherThing(function () {
+    noop();
+  })
+
+  hooks.beforeEach(function () {
+    const myConst = 0;
+    noop();
+    // do some things here
+  });
+
+  test('it renders search', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { getTestMetadata as _getTestMetadata } from '@ember/test-helpers';
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/multiple-module-one-beforeeach-new-import-input-test.js';
+    const myConst = 0;
+    noop(); // do some things here
+  });
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+module('Acceptance | search acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/multiple-module-one-beforeeach-new-import-input-test.js';
+    const myConst = 0;
+    noop(); // do some things here
+  });
+  test('it renders search', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+
+`;
+
+exports[`addMetadata for modules without any beforeEach, it adds a new beforeEach after the first call of either "test", "skip" or "todo": for modules without any beforeEach, it adds a new beforeEach after the first call of either "test", "skip" or "todo" 1`] = `
+
+import {module, test} from 'qunit';
+import {setupApplicationTest} from 'ember-qunit';
+import { click, visit } from '@ember/test-helpers';
+
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  some.otherThing(function () {
+    noop();
+  })
+
+  test.only('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  some.otherThing(function () {
+    noop();
+  })
+
+  test.skip('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import {
+  click,
+  visit,
+  getTestMetadata as _getTestMetadata,
+} from '@ember/test-helpers';
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/multiple-module-no-beforeeach-test-skip-todo-input-test.js';
+  });
+  test.only('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/multiple-module-no-beforeeach-test-skip-todo-input-test.js';
+  });
+  test.skip('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+
+`;
+
+exports[`addMetadata for multiple sibling modules without any beforeEach, it adds a new beforeEach & getTestMetadata statements: for multiple sibling modules without any beforeEach, it adds a new beforeEach & getTestMetadata statements 1`] = `
+
+import {module, test} from 'qunit';
+import {setupApplicationTest} from 'ember-qunit';
+import { click, visit } from '@ember/test-helpers';
+
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  some.otherThing(function () {
+    noop();
+  })
+
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+module('Acceptance | search acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  some.otherThing(function () {
+    noop();
+  })
+
+  test('it renders search', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import {
+  click,
+  visit,
+  getTestMetadata as _getTestMetadata,
+} from '@ember/test-helpers';
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/multiple-module-no-beforeeach-import-exists-input-test.js';
+  });
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+module('Acceptance | search acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/multiple-module-no-beforeeach-import-exists-input-test.js';
+  });
+  test('it renders search', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+
+`;
+
+exports[`addMetadata for nested modules with beforeEach, it adds a new beforeEach before only the first nested module call: for nested modules with beforeEach, it adds a new beforeEach before only the first nested module call 1`] = `
+
+import {module, test} from 'qunit';
+import {setupApplicationTest} from 'ember-qunit';
+import { click, visit } from '@ember/test-helpers';
+
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  some.otherThing(function () {
+    noop();
+  })
+
+  hooks.beforeEach(function () {
+    const myConst = 0;
+    noop();
+    // do some things here
+  });
+
+  module('nested module', () => {
+    beforeEach(() => {
+      // nested beforeEach should be left untouched
+    })
+    test('a test', () => {});
+    module('nested module', () => {
+      test('a test', () => {});
+    });
+  });
+
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import {
+  click,
+  visit,
+  getTestMetadata as _getTestMetadata,
+} from '@ember/test-helpers';
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/nested-modules-with-beforeeach-import-exists-input-test.js';
+    const myConst = 0;
+    noop(); // do some things here
+  });
+  module('nested module', () => {
+    beforeEach(() => {
+      // nested beforeEach should be left untouched
+    });
+    test('a test', () => {});
+    module('nested module', () => {
+      test('a test', () => {});
+    });
+  });
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+
+`;
+
+exports[`addMetadata for nested modules without any beforeEach, it adds a new beforeEach before the first nested module call: for nested modules without any beforeEach, it adds a new beforeEach before the first nested module call 1`] = `
+
+import {module, test} from 'qunit';
+import {setupApplicationTest} from 'ember-qunit';
+import { click, visit } from '@ember/test-helpers';
+
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  some.otherThing(function () {
+    noop();
+  })
+
+  module('nested module', () => {
+    test('a test', () => {});
+    module('nested module', () => {
+      test('a test', () => {});
+    });
+  });
+
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import {
+  click,
+  visit,
+  getTestMetadata as _getTestMetadata,
+} from '@ember/test-helpers';
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/nested-modules-no-beforeeach-import-exists-input-test.js';
+  });
+  module('nested module', () => {
+    test('a test', () => {});
+    module('nested module', () => {
+      test('a test', () => {});
+    });
+  });
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+
+`;
