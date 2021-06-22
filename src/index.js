@@ -80,12 +80,15 @@ function getTestMetadataDeclaration(t) {
 }
 
 function shouldLoadFile(filename) {
-  return (filename.match(/-test\.js/gi));
+  return filename.match(/[-_]test\.js/gi);
 }
 
 function hasMetadataDeclaration(node) {
   if (node.expression && node.expression.type === 'AssignmentExpression') {
-   return (node.expression.left.object.name === 'testMetadata') && (node.expression.left.property.name === 'filePath');
+    return (
+      node.expression.left.object.name === 'testMetadata' &&
+      node.expression.left.property.name === 'filePath'
+    );
   } else {
     return false;
   }
@@ -106,7 +109,7 @@ function addMetadata({ types: t }) {
     visitor: {
       Program({ node }, state) {
         const { filename } = state.file.opts;
-        state.opts.shouldLoadFile = shouldLoadFile(filename) ? shouldLoadFile(filename).length > 0 : null;
+        state.opts.shouldLoadFile = shouldLoadFile(filename);
 
         if (!state.opts.shouldLoadFile) {
           return;
@@ -170,9 +173,9 @@ function addMetadata({ types: t }) {
         }
 
         if (!state.opts.beforeEachModified) {
-          const hasBeforeEach =
-          babelPath.node.callee.property ?
-          babelPath.node.callee.property.name === 'beforeEach' : false;
+          const hasBeforeEach = babelPath.node.callee.property
+            ? babelPath.node.callee.property.name === 'beforeEach'
+            : false;
           const testMethodCalls = ['test', 'module'];
 
           let nodeName = '';
@@ -184,9 +187,9 @@ function addMetadata({ types: t }) {
           }
 
           const isFirstChildTestMethodCall =
-          testMethodCalls.includes(nodeName) &&
-          babelPath.scope.path.parentPath &&
-          babelPath.scope.path.parentPath.node.callee.name === 'module';
+            testMethodCalls.includes(nodeName) &&
+            babelPath.scope.path.parentPath &&
+            babelPath.scope.path.parentPath.node.callee.name === 'module';
 
           const shouldDoTransform = hasBeforeEach || isFirstChildTestMethodCall;
 
