@@ -12,7 +12,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
   hooks.beforeEach(function () {
     let testMetadata = getTestMetadata(this);
     testMetadata.filePath =
-      '__tests__/__fixtures__/nested-modules-with-beforeeach-import-exists-code.js';
+      '__tests__/__fixtures__/nested-modules-with-beforeeach-import-exists-input-test.js';
     const myConst = 0;
     noop(); // do some things here
   });

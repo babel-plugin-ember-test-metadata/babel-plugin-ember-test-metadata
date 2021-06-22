@@ -5,6 +5,7 @@ const path = require('path');
 pluginTester({
   plugin: addMetadata,
   pluginName: 'addMetadata',
+  // snapshot: true,
   tests: [
     {
       title:
@@ -12,7 +13,7 @@ pluginTester({
       fixture: path.join(
         __dirname,
         '__fixtures__/',
-        'one-module-one-beforeeach-new-import-code.js'
+        'one-module-one-beforeeach-new-import-input-test.js'
       ),
       outputFixture: path.join(
         __dirname,
@@ -26,7 +27,7 @@ pluginTester({
       fixture: path.join(
         __dirname,
         '__fixtures__/',
-        'multiple-module-one-beforeeach-new-import-code.js'
+        'multiple-module-one-beforeeach-new-import-input-test.js'
       ),
       outputFixture: path.join(
         __dirname,
@@ -40,7 +41,7 @@ pluginTester({
       fixture: path.join(
         __dirname,
         '__fixtures__/',
-        'one-module-one-beforeeach-import-exists-code.js'
+        'one-module-one-beforeeach-import-exists-input-test.js'
       ),
       outputFixture: path.join(
         __dirname,
@@ -54,7 +55,7 @@ pluginTester({
       fixture: path.join(
         __dirname,
         '__fixtures__/',
-        'one-module-no-beforeeach-import-exists-code.js'
+        'one-module-no-beforeeach-import-exists-input-test.js'
       ),
       outputFixture: path.join(
         __dirname,
@@ -68,7 +69,7 @@ pluginTester({
       fixture: path.join(
         __dirname,
         '__fixtures__/',
-        'one-module-no-beforeeach-test-member-code.js'
+        'one-module-no-beforeeach-test-member-input-test.js'
       ),
       outputFixture: path.join(
         __dirname,
@@ -82,7 +83,7 @@ pluginTester({
       fixture: path.join(
         __dirname,
         '__fixtures__/',
-        'multiple-module-no-beforeeach-import-exists-code.js'
+        'multiple-module-no-beforeeach-import-exists-input-test.js'
       ),
       outputFixture: path.join(
         __dirname,
@@ -96,7 +97,7 @@ pluginTester({
       fixture: path.join(
         __dirname,
         '__fixtures__/',
-        'multiple-module-no-beforeeach-test-skip-todo-code.js'
+        'multiple-module-no-beforeeach-test-skip-todo-input-test.js'
       ),
       outputFixture: path.join(
         __dirname,
@@ -110,7 +111,7 @@ pluginTester({
       fixture: path.join(
         __dirname,
         '__fixtures__/',
-        'nested-modules-no-beforeeach-import-exists-code.js'
+        'nested-modules-no-beforeeach-import-exists-input-test.js'
       ),
       outputFixture: path.join(
         __dirname,
@@ -124,7 +125,7 @@ pluginTester({
       fixture: path.join(
         __dirname,
         '__fixtures__/',
-        'nested-modules-with-beforeeach-import-exists-code.js'
+        'nested-modules-with-beforeeach-import-exists-input-test.js'
       ),
       outputFixture: path.join(
         __dirname,

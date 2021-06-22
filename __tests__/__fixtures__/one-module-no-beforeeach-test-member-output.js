@@ -12,7 +12,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
   hooks.beforeEach(function () {
     let testMetadata = getTestMetadata(this);
     testMetadata.filePath =
-      '__tests__/__fixtures__/one-module-no-beforeeach-test-member-code.js';
+      '__tests__/__fixtures__/one-module-no-beforeeach-test-member-input-test.js';
   });
   test.only('it renders browse page', async function (assert) {
     await visit(BROWSE_URL);

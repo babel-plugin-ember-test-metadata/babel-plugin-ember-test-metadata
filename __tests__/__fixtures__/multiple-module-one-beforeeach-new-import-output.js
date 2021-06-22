@@ -12,7 +12,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
   hooks.beforeEach(function () {
     let testMetadata = getTestMetadata(this);
     testMetadata.filePath =
-      '__tests__/__fixtures__/multiple-module-one-beforeeach-new-import-code.js';
+      '__tests__/__fixtures__/multiple-module-one-beforeeach-new-import-input-test.js';
     const myConst = 0;
     noop(); // do some things here
   });
@@ -29,7 +29,7 @@ module('Acceptance | search acceptance test', function (hooks) {
   hooks.beforeEach(function () {
     let testMetadata = getTestMetadata(this);
     testMetadata.filePath =
-      '__tests__/__fixtures__/multiple-module-one-beforeeach-new-import-code.js';
+      '__tests__/__fixtures__/multiple-module-one-beforeeach-new-import-input-test.js';
     const myConst = 0;
     noop(); // do some things here
   });
