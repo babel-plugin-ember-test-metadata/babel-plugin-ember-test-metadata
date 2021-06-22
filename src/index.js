@@ -15,9 +15,16 @@ function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
 
   if (hasBeforeEach) {
     const { body } = babelPath.node.arguments[0].body;
+    let existingMetadataDeclaration;
 
-    body.unshift(testMetadataAssignment);
-    body.unshift(testMetadataVarDeclaration);
+    if (body.length > 0) {
+      existingMetadataDeclaration = body.find(hasMetadataDeclaration);
+    }
+
+    if (!existingMetadataDeclaration) {
+      body.unshift(testMetadataAssignment);
+      body.unshift(testMetadataVarDeclaration);
+    }
   } else {
     const beforeEachFunc = t.functionExpression(
       null,
@@ -72,6 +79,18 @@ function getTestMetadataDeclaration(t) {
   ]);
 }
 
+function shouldLoadFile(filename) {
+  return (filename.match(/-test\.js/gi));
+}
+
+function hasMetadataDeclaration(node) {
+  if (node.expression && node.expression.type === 'AssignmentExpression') {
+   return (node.expression.left.object.name === 'testMetadata') && (node.expression.left.property.name === 'filePath');
+  } else {
+    return false;
+  }
+}
+
 /**
  * Babel plugin for Ember apps that adds the filepath of the test file that Babel is processing, to
  * the testMetadata. It does this by making the following transformations to the test file:
@@ -85,7 +104,14 @@ function addMetadata({ types: t }) {
   return {
     name: 'addMetadata',
     visitor: {
-      Program({ node }) {
+      Program({ node }, state) {
+        const { filename } = state.file.opts;
+        state.opts.shouldLoadFile = shouldLoadFile(filename) ? shouldLoadFile(filename).length > 0 : null;
+
+        if (!state.opts.shouldLoadFile) {
+          return;
+        }
+
         const EMBER_TEST_HELPERS = '@ember/test-helpers';
         const GET_TEST_METADATA = 'getTestMetadata';
         const imports = node.body.filter((maybeImport) => {
@@ -134,6 +160,8 @@ function addMetadata({ types: t }) {
        * @param {object} state
        */
       CallExpression(babelPath, state) {
+        if (!state.opts.shouldLoadFile) return;
+
         // If we're at a top-level call expression, then we reset the beforeEachModified state to false, and let Babel
         // move on to the next call expression.
         if (babelPath.scope.block.type === 'Program') {
@@ -143,15 +171,23 @@ function addMetadata({ types: t }) {
 
         if (!state.opts.beforeEachModified) {
           const hasBeforeEach =
-            babelPath.node.callee.property &&
-            babelPath.node.callee.property.name === 'beforeEach';
+          babelPath.node.callee.property ?
+          babelPath.node.callee.property.name === 'beforeEach' : false;
           const testMethodCalls = ['test', 'module'];
-          const nodeName =
-            babelPath.node.callee.name || babelPath.node.callee.object.name;
+
+          let nodeName = '';
+
+          if (babelPath.node.callee.name) {
+            nodeName = babelPath.node.callee.name;
+          } else if (babelPath.node.callee.object) {
+            nodeName = babelPath.node.callee.object.name;
+          }
+
           const isFirstChildTestMethodCall =
-            testMethodCalls.includes(nodeName) &&
-            babelPath.scope.path.parentPath &&
-            babelPath.scope.path.parentPath.node.callee.name === 'module';
+          testMethodCalls.includes(nodeName) &&
+          babelPath.scope.path.parentPath &&
+          babelPath.scope.path.parentPath.node.callee.name === 'module';
+
           const shouldDoTransform = hasBeforeEach || isFirstChildTestMethodCall;
 
           if (shouldDoTransform) {
