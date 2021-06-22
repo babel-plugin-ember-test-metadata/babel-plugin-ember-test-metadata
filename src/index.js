@@ -12,7 +12,7 @@ const path = require('path');
 function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
   const testMetadataVarDeclaration = getTestMetadataDeclaration(t);
   const testMetadataAssignment = getTestMetadataAssignment(state, t);
-debugger;
+  debugger;
   if (hasBeforeEach) {
     const body = babelPath.get('arguments')[0].get('body').get('body');
     let existingMetadataDeclaration;
@@ -115,16 +115,19 @@ function addMetadata({ types: t }) {
           return;
         }
 
-        let importDeclarations = babelPath.get('body').filter((n) => n.type === 'ImportDeclaration');
+        let importDeclarations = babelPath
+          .get('body')
+          .filter((n) => n.type === 'ImportDeclaration');
         let emberTestHelpers = importDeclarations.find(
           (n) => n.get('source').get('value').node === '@ember/test-helpers'
         );
 
-        let getTestMetadata = babelPath.scope.generateUidIdentifier('getTestMetadata');
+        let getTestMetadata =
+          babelPath.scope.generateUidIdentifier('getTestMetadata');
 
         if (emberTestHelpers !== undefined) {
           // Append to existing test-helpers import
-          emberTestHelpers.get('specifiers').unshiftContainer(getTestMetadata)
+          emberTestHelpers.get('specifiers').unshiftContainer(getTestMetadata);
         } else {
           const getTestMetaDataImportSpecifier = t.importSpecifier(
             getTestMetadata,
