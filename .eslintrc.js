@@ -10,7 +10,7 @@ module.exports = {
     'prettier',
   ],
   parserOptions: {
-    ecmaVersion: 2021,
+    ecmaVersion: 2019,
     sourceType: 'script',
   },
   rules: {},

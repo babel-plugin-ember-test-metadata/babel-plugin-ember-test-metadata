@@ -12,9 +12,9 @@ const path = require('path');
 function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
   const testMetadataVarDeclaration = getTestMetadataDeclaration(t);
   const testMetadataAssignment = getTestMetadataAssignment(state, t);
-
+debugger;
   if (hasBeforeEach) {
-    const { body } = babelPath.node.arguments[0].body;
+    const body = babelPath.get('arguments')[0].get('body').get('body');
     let existingMetadataDeclaration;
 
     if (body.length > 0) {
@@ -22,8 +22,8 @@ function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
     }
 
     if (!existingMetadataDeclaration) {
-      body.unshift(testMetadataAssignment);
-      body.unshift(testMetadataVarDeclaration);
+      body.unshiftContainer(testMetadataAssignment);
+      body.unshiftContainer(testMetadataVarDeclaration);
     }
   } else {
     const beforeEachFunc = t.functionExpression(
@@ -83,7 +83,7 @@ function shouldLoadFile(filename) {
   return filename.match(/[-_]test\.js/gi);
 }
 
-function hasMetadataDeclaration(node) {
+function hasMetadataDeclaration({ node }) {
   if (node.expression && node.expression.type === 'AssignmentExpression') {
     return (
       node.expression.left.object.name === 'testMetadata' &&
@@ -107,7 +107,7 @@ function addMetadata({ types: t }) {
   return {
     name: 'addMetadata',
     visitor: {
-      Program({ node }, state) {
+      Program(babelPath, state) {
         const { filename } = state.file.opts;
         state.opts.shouldLoadFile = shouldLoadFile(filename);
 
@@ -115,31 +115,27 @@ function addMetadata({ types: t }) {
           return;
         }
 
-        const EMBER_TEST_HELPERS = '@ember/test-helpers';
-        const GET_TEST_METADATA = 'getTestMetadata';
-        const imports = node.body.filter((maybeImport) => {
-          return maybeImport.type === 'ImportDeclaration';
-        });
-        const emberTestHelpers = imports.filter(
-          (imp) => imp.source.value === EMBER_TEST_HELPERS
+        let importDeclarations = babelPath.get('body').filter((n) => n.type === 'ImportDeclaration');
+        let emberTestHelpers = importDeclarations.find(
+          (n) => n.get('source').get('value').node === '@ember/test-helpers'
         );
-        const importExists =
-          emberTestHelpers !== undefined && emberTestHelpers.length > 0;
 
-        if (importExists) {
+        let getTestMetadata = babelPath.scope.generateUidIdentifier('getTestMetadata');
+
+        if (emberTestHelpers !== undefined) {
           // Append to existing test-helpers import
-          emberTestHelpers[0].specifiers.push(t.identifier(GET_TEST_METADATA));
+          emberTestHelpers.get('specifiers').unshiftContainer(getTestMetadata)
         } else {
           const getTestMetaDataImportSpecifier = t.importSpecifier(
-            t.identifier(GET_TEST_METADATA),
-            t.identifier(GET_TEST_METADATA)
+            getTestMetadata,
+            getTestMetadata
           );
           const getTestMetaDataImportDeclaration = t.importDeclaration(
             [getTestMetaDataImportSpecifier],
-            t.stringLiteral(EMBER_TEST_HELPERS)
+            t.stringLiteral('@ember/test-helpers')
           );
 
-          node.body.splice(imports.length, 0, getTestMetaDataImportDeclaration);
+          babelPath.unshiftContainer('body', getTestMetaDataImportDeclaration);
         }
       },
 
