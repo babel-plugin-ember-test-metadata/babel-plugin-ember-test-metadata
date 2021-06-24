@@ -75,8 +75,7 @@ function getTestMetadataAssignment(state, t) {
  */
 function getTestMetadataDeclaration(state, t) {
   const getTestMetadataExpression = t.callExpression(
-    // t.identifier(state.opts.getTestMetadataUID.name),
-    t.identifier('getTestMetadata'),
+    t.identifier(state.opts.getTestMetadataUID.name),
     [t.thisExpression()]
   );
 
@@ -132,12 +131,11 @@ function addMetadata({ types: t }) {
           (n) => n.get('source').get('value').node === '@ember/test-helpers'
         );
 
-        // Simplifying for now, until test issues are solved.
-        // state.opts.getTestMetadataUID =
-        //   babelPath.scope.generateUidIdentifier(GET_TEST_METADATA);
+        state.opts.getTestMetadataUID =
+          babelPath.scope.generateUidIdentifier(GET_TEST_METADATA);
 
         const getTestMetaDataImportSpecifier = t.importSpecifier(
-          t.identifier(GET_TEST_METADATA),
+          state.opts.getTestMetadataUID,
           t.identifier(GET_TEST_METADATA)
         );
 
