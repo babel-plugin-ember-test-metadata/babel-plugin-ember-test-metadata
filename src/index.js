@@ -38,10 +38,12 @@ function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
         t.expressionStatement(testMetadataAssignment),
       ])
     );
-    const beforeEachExpression = t.expressionStatement(t.callExpression(
-      t.memberExpression(t.identifier('hooks'), t.identifier('beforeEach')),
-      [beforeEachFunc]
-    ));
+    const beforeEachExpression = t.expressionStatement(
+      t.callExpression(
+        t.memberExpression(t.identifier('hooks'), t.identifier('beforeEach')),
+        [beforeEachFunc]
+      )
+    );
 
     babelPath.insertBefore(beforeEachExpression);
   }
@@ -57,11 +59,16 @@ function getTestMetadataAssignment(state, t) {
   const { root, filename } = state.file.opts;
   const relativeFilePath = path.relative(root, filename);
 
-  return t.expressionStatement(t.assignmentExpression(
-    '=',
-    t.memberExpression(t.identifier('testMetadata'), t.identifier('filePath')),
-    t.stringLiteral(relativeFilePath)
-  ));
+  return t.expressionStatement(
+    t.assignmentExpression(
+      '=',
+      t.memberExpression(
+        t.identifier('testMetadata'),
+        t.identifier('filePath')
+      ),
+      t.stringLiteral(relativeFilePath)
+    )
+  );
 }
 
 /**
