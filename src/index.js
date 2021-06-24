@@ -33,10 +33,7 @@ function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
     const beforeEachFunc = t.functionExpression(
       null,
       [],
-      t.blockStatement([
-        testMetadataVarDeclaration,
-        testMetadataAssignment,
-      ])
+      t.blockStatement([testMetadataVarDeclaration, testMetadataAssignment])
     );
     const beforeEachExpression = t.expressionStatement(
       t.callExpression(
