@@ -24,7 +24,10 @@ function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
 
       let existingMetadataDeclaration;
 
-      if (functionBlockBodyStatementsArray.length && functionBlockBodyStatementsArray.length > 0) {
+      if (
+        functionBlockBodyStatementsArray.length &&
+        functionBlockBodyStatementsArray.length > 0
+      ) {
         existingMetadataDeclaration = functionBlockBodyStatementsArray.find(
           hasMetadataDeclaration
         );
