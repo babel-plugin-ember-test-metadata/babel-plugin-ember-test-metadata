@@ -9,50 +9,31 @@ const path = require('path');
  * @param {boolean} hasBeforeEach  - if true, write expressions into existing beforeEach,
  *   otherwise write a new beforeEach
  */
-function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
+ function writeTestMetadataExpressions(state, functionBlockArray, t) {
   const testMetadataVarDeclaration = getTestMetadataDeclaration(state, t);
   const testMetadataAssignment = getTestMetadataAssignment(state, t);
 
-  if (hasBeforeEach) {
-    const functionBlock = babelPath.get('arguments')[0];
-    const functionBlockBody = functionBlock.get('body');
-    let functionBlockBodyStatementsArray;
+  functionBlockArray.unshift(testMetadataAssignment);
+  functionBlockArray.unshift(testMetadataVarDeclaration);
+}
 
-    // if (functionBlockBody.get && functionBlockBody.get('body')) {
-    if (functionBlockBody.node) {
-      functionBlockBodyStatementsArray = functionBlockBody.node.body;
+function writeBeforeEach(state, babelPath, t) {
+  const testMetadataVarDeclaration = getTestMetadataDeclaration(state, t);
+  const testMetadataAssignment = getTestMetadataAssignment(state, t);
 
-      let existingMetadataDeclaration;
+  const beforeEachFunc = t.functionExpression(
+    null,
+    [],
+    t.blockStatement([testMetadataVarDeclaration, testMetadataAssignment])
+  );
+  const beforeEachExpression = t.expressionStatement(
+    t.callExpression(
+      t.memberExpression(t.identifier('hooks'), t.identifier('beforeEach')),
+      [beforeEachFunc]
+    )
+  );
 
-      if (
-        functionBlockBodyStatementsArray.length &&
-        functionBlockBodyStatementsArray.length > 0
-      ) {
-        existingMetadataDeclaration = functionBlockBodyStatementsArray.find(
-          hasMetadataDeclaration
-        );
-      }
-
-      if (!existingMetadataDeclaration) {
-        functionBlockBody.unshiftContainer('body', testMetadataAssignment);
-        functionBlockBody.unshiftContainer('body', testMetadataVarDeclaration);
-      }
-    }
-  } else {
-    const beforeEachFunc = t.functionExpression(
-      null,
-      [],
-      t.blockStatement([testMetadataVarDeclaration, testMetadataAssignment])
-    );
-    const beforeEachExpression = t.expressionStatement(
-      t.callExpression(
-        t.memberExpression(t.identifier('hooks'), t.identifier('beforeEach')),
-        [beforeEachFunc]
-      )
-    );
-
-    babelPath.insertBefore(beforeEachExpression);
-  }
+  babelPath.insertBefore(beforeEachExpression);
 }
 
 /**
@@ -193,29 +174,56 @@ function addMetadata({ types: t }) {
         }
 
         if (!state.opts.beforeEachModified) {
-          const hasBeforeEach = babelPath.node.callee.property
+          const isBeforeEach = babelPath.node.callee.property
             ? babelPath.node.callee.property.name === 'beforeEach'
             : false;
-          const testMethodCalls = ['test', 'module'];
 
-          let nodeName = '';
+          if (isBeforeEach) {
+            const functionBlock = babelPath.get('arguments')[0];
+            const functionBlockBody = functionBlock.node;
+            let functionBlockBodyStatementsArray = [];
+            let existingMetadataDeclaration;
 
-          if (babelPath.node.callee.name) {
-            nodeName = babelPath.node.callee.name;
-          } else if (babelPath.node.callee.object) {
-            nodeName = babelPath.node.callee.object.name;
-          }
+            if (functionBlockBody.body) {
+              if (functionBlockBody.body.body && Array.isArray(functionBlockBody.body.body)) {
+                functionBlockBodyStatementsArray = functionBlockBody.body.body;
+              } else if (Array.isArray(functionBlockBody.body)) {
+                functionBlockBodyStatementsArray = functionBlockBody.body;
+              }
+            } else {
+              console.log('no body', functionBlockBody);
+            }
 
-          const isFirstChildTestMethodCall =
-            testMethodCalls.includes(nodeName) &&
-            babelPath.scope.path.parentPath &&
-            babelPath.scope.path.parentPath.node.callee.name === 'module';
+            if (functionBlockBodyStatementsArray.length > 0) {
+              existingMetadataDeclaration = functionBlockBodyStatementsArray.find(
+                hasMetadataDeclaration
+              );
+            }
 
-          const shouldDoTransform = hasBeforeEach || isFirstChildTestMethodCall;
+            if (!existingMetadataDeclaration) {
+              writeTestMetadataExpressions(state, functionBlockBodyStatementsArray, t);
+              state.opts.beforeEachModified = true;
+            }
+          } else {
+            // else needs a new beforeEach, and locate where to place it
+            const testMethodCalls = ['test', 'module'];
+            let nodeName = '';
 
-          if (shouldDoTransform) {
-            writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach);
-            state.opts.beforeEachModified = true;
+            if (babelPath.node.callee.name) {
+              nodeName = babelPath.node.callee.name;
+            } else if (babelPath.node.callee.object) {
+              nodeName = babelPath.node.callee.object.name;
+            }
+
+            const isFirstChildTestMethodCall =
+              testMethodCalls.includes(nodeName) &&
+              babelPath.scope.path.parentPath &&
+              babelPath.scope.path.parentPath.node.callee.name === 'module';
+
+            if (isFirstChildTestMethodCall) {
+              writeBeforeEach(state, babelPath, t);
+              state.opts.beforeEachModified = true;
+            }
           }
         }
       },
