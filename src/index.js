@@ -9,7 +9,7 @@ const path = require('path');
  * @param {boolean} hasBeforeEach  - if true, write expressions into existing beforeEach,
  *   otherwise write a new beforeEach
  */
- function writeTestMetadataExpressions(state, functionBlockArray, t) {
+function writeTestMetadataExpressions(state, functionBlockArray, t) {
   const testMetadataVarDeclaration = getTestMetadataDeclaration(state, t);
   const testMetadataAssignment = getTestMetadataAssignment(state, t);
 
@@ -185,7 +185,10 @@ function addMetadata({ types: t }) {
             let existingMetadataDeclaration;
 
             if (functionBlockBody.body) {
-              if (functionBlockBody.body.body && Array.isArray(functionBlockBody.body.body)) {
+              if (
+                functionBlockBody.body.body &&
+                Array.isArray(functionBlockBody.body.body)
+              ) {
                 functionBlockBodyStatementsArray = functionBlockBody.body.body;
               } else if (Array.isArray(functionBlockBody.body)) {
                 functionBlockBodyStatementsArray = functionBlockBody.body;
@@ -195,13 +198,16 @@ function addMetadata({ types: t }) {
             }
 
             if (functionBlockBodyStatementsArray.length > 0) {
-              existingMetadataDeclaration = functionBlockBodyStatementsArray.find(
-                hasMetadataDeclaration
-              );
+              existingMetadataDeclaration =
+                functionBlockBodyStatementsArray.find(hasMetadataDeclaration);
             }
 
             if (!existingMetadataDeclaration) {
-              writeTestMetadataExpressions(state, functionBlockBodyStatementsArray, t);
+              writeTestMetadataExpressions(
+                state,
+                functionBlockBodyStatementsArray,
+                t
+              );
               state.opts.beforeEachModified = true;
             }
           } else {
