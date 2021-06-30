@@ -184,6 +184,8 @@ function addMetadata({ types: t }) {
             let functionBlockBodyStatementsArray = [];
             let existingMetadataDeclaration;
 
+            // Check if functionBlock.node.async = true?
+
             if (functionBlockBody.body) {
               if (
                 functionBlockBody.body.body &&
