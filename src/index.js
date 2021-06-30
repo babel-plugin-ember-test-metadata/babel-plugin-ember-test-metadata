@@ -16,18 +16,24 @@ function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
   if (hasBeforeEach) {
     const functionBlock = babelPath.get('arguments')[0];
     const functionBlockBody = functionBlock.get('body');
-    const functionBlockBodyStatementsArray = functionBlockBody.get('body');
-    let existingMetadataDeclaration;
+    let functionBlockBodyStatementsArray;
 
-    if (functionBlockBodyStatementsArray.length > 0) {
-      existingMetadataDeclaration = functionBlockBodyStatementsArray.find(
-        hasMetadataDeclaration
-      );
-    }
+    // if (functionBlockBody.get && functionBlockBody.get('body')) {
+    if (functionBlockBody.node) {
+      functionBlockBodyStatementsArray = functionBlockBody.node.body;
 
-    if (!existingMetadataDeclaration) {
-      functionBlockBody.unshiftContainer('body', testMetadataAssignment);
-      functionBlockBody.unshiftContainer('body', testMetadataVarDeclaration);
+      let existingMetadataDeclaration;
+
+      if (functionBlockBodyStatementsArray.length && functionBlockBodyStatementsArray.length > 0) {
+        existingMetadataDeclaration = functionBlockBodyStatementsArray.find(
+          hasMetadataDeclaration
+        );
+      }
+
+      if (!existingMetadataDeclaration) {
+        functionBlockBody.unshiftContainer('body', testMetadataAssignment);
+        functionBlockBody.unshiftContainer('body', testMetadataVarDeclaration);
+      }
     }
   } else {
     const beforeEachFunc = t.functionExpression(
@@ -91,7 +97,7 @@ function shouldLoadFile(filename) {
   return filename.match(/[-_]test\.js/gi);
 }
 
-function hasMetadataDeclaration({ node }) {
+function hasMetadataDeclaration(node) {
   if (node.expression && node.expression.type === 'AssignmentExpression') {
     return (
       node.expression.left.object.name === 'testMetadata' &&
