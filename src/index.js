@@ -92,7 +92,11 @@ function shouldLoadFile(filename) {
 }
 
 function hasMetadataDeclaration({ node }) {
-  if (node.expression && node.expression.type === 'AssignmentExpression') {
+  if (
+    node.expression &&
+    node.expression.type === 'AssignmentExpression' &&
+    node.expression.left.object
+  ) {
     return (
       node.expression.left.object.name === 'testMetadata' &&
       node.expression.left.property.name === 'filePath'
@@ -123,6 +127,8 @@ function addMetadata({ types: t }) {
         if (!state.opts.shouldLoadFile) {
           return;
         }
+
+        state.opts.transformedModules = [];
 
         let importDeclarations = babelPath
           .get('body')
@@ -176,37 +182,49 @@ function addMetadata({ types: t }) {
       CallExpression(babelPath, state) {
         if (!state.opts.shouldLoadFile) return;
 
-        // If we're at a top-level call expression, then we reset the beforeEachModified state to false, and let Babel
-        // move on to the next call expression.
-        if (babelPath.scope.block.type === 'Program') {
-          state.opts.beforeEachModified = false;
-          return;
+        // If this call expression is a top-level module, store string arg, else skip the nested module entirely
+        if (babelPath.get('callee').isIdentifier({ name: 'module' })) {
+          if (babelPath.parentPath.parent.type === 'Program') {
+            state.opts.moduleName = babelPath.get('arguments')[0].node.value;
+          } else {
+            // skip traversing contents in this nested module
+            babelPath.skip();
+          }
         }
 
-        if (!state.opts.beforeEachModified) {
-          const hasBeforeEach = babelPath.node.callee.property
+        if (
+          state.opts.moduleName &&
+          !state.opts.transformedModules.includes(state.opts.moduleName)
+        ) {
+          const isBeforeEach = babelPath.node.callee.property
             ? babelPath.node.callee.property.name === 'beforeEach'
             : false;
-          const testMethodCalls = ['test', 'module'];
+          let isFirstChildTestMethodCall;
 
-          let nodeName = '';
+          if (!isBeforeEach) {
+            const testMethodCalls = ['test', 'tests', 'module'];
+            let nodeName = '';
 
-          if (babelPath.node.callee.name) {
-            nodeName = babelPath.node.callee.name;
-          } else if (babelPath.node.callee.object) {
-            nodeName = babelPath.node.callee.object.name;
+            if (babelPath.node.callee && babelPath.node.callee.name) {
+              nodeName = babelPath.node.callee.name;
+            } else if (babelPath.node.callee.object) {
+              nodeName = babelPath.node.callee.object.name;
+            } else {
+              nodeName = babelPath.node.name;
+            }
+
+            isFirstChildTestMethodCall =
+              nodeName &&
+              testMethodCalls.includes(nodeName) &&
+              babelPath.scope.path.parentPath &&
+              babelPath.scope.path.parentPath.node &&
+              babelPath.scope.path.parentPath.node.callee &&
+              babelPath.scope.path.parentPath.node.callee.name === 'module';
           }
 
-          const isFirstChildTestMethodCall =
-            testMethodCalls.includes(nodeName) &&
-            babelPath.scope.path.parentPath &&
-            babelPath.scope.path.parentPath.node.callee.name === 'module';
-
-          const shouldDoTransform = hasBeforeEach || isFirstChildTestMethodCall;
-
-          if (shouldDoTransform) {
-            writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach);
-            state.opts.beforeEachModified = true;
+          if (isBeforeEach || isFirstChildTestMethodCall) {
+            writeTestMetadataExpressions(state, babelPath, t, isBeforeEach);
+            state.opts.transformedModules.push(state.opts.moduleName);
           }
         }
       },

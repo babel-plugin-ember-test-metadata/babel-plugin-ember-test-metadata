@@ -54,6 +54,15 @@ pluginTester({
     },
     {
       title:
+        'for a module with a beforeEach that is passed an async function callback, getTestMetadata statements are adding correctly',
+      fixture: path.join(
+        __dirname,
+        '__fixtures__/',
+        'one-module-one-async-beforeeach-new-import-input-test.js'
+      ),
+    },
+    {
+      title:
         'for multiple sibling modules without any beforeEach, it adds a new beforeEach & getTestMetadata statements',
       fixture: path.join(
         __dirname,
