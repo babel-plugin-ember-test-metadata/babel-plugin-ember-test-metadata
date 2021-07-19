@@ -63,6 +63,42 @@ module('Acceptance | browse acceptance test', function (hooks) {
 
 `;
 
+exports[`addMetadata for a module that does not pass in hooks, pass in "hooks": for a module that does not pass in hooks, pass in "hooks" 1`] = `
+
+import { module, test } from 'qunit';
+
+module('Unit | foo', function () {
+  some.otherThing(function () {
+    noop();
+  });
+
+  test('foo', async function (assert) {
+    assert.equal('bar', 'bar');
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { getTestMetadata as _getTestMetadata } from '@ember/test-helpers';
+import { module, test } from 'qunit';
+module('Unit | foo', function (hooks) {
+  some.otherThing(function () {
+    noop();
+  });
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/one-module-one-beforeeach-no-hooks-new-import-input-test.js';
+  });
+  test('foo', async function (assert) {
+    assert.equal('bar', 'bar');
+  });
+});
+
+
+`;
+
 exports[`addMetadata for a module with a beforeEach that is passed an async function callback, getTestMetadata statements are adding correctly: for a module with a beforeEach that is passed an async function callback, getTestMetadata statements are adding correctly 1`] = `
 
 import {module, test} from 'qunit';

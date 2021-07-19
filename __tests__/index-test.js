@@ -97,5 +97,13 @@ pluginTester({
         'nested-modules-with-beforeeach-import-exists-input-test.js'
       ),
     },
+    {
+      title: 'for a module that does not pass in hooks, pass in "hooks"',
+      fixture: path.join(
+        __dirname,
+        '__fixtures__/',
+        'one-module-one-beforeeach-no-hooks-new-import-input-test.js'
+      ),
+    },
   ],
 });

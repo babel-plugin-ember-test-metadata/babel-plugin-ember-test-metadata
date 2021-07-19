@@ -129,6 +129,7 @@ function addMetadata({ types: t }) {
         }
 
         state.opts.transformedModules = [];
+        state.opts.hasHooks;
 
         let importDeclarations = babelPath
           .get('body')
@@ -182,10 +183,18 @@ function addMetadata({ types: t }) {
       CallExpression(babelPath, state) {
         if (!state.opts.shouldLoadFile) return;
 
+        let moduleArgs;
+
         // If this call expression is a top-level module, store string arg, else skip the nested module entirely
         if (babelPath.get('callee').isIdentifier({ name: 'module' })) {
           if (babelPath.parentPath.parent.type === 'Program') {
-            state.opts.moduleName = babelPath.get('arguments')[0].node.value;
+            moduleArgs = babelPath.get('arguments');
+
+            const moduleFunction = moduleArgs[1];
+            const moduleFunctionParams = moduleFunction.get('params');
+
+            state.opts.hasHooks = moduleFunctionParams.length > 0;
+            state.opts.moduleName = moduleArgs[0].node.value;
           } else {
             // skip traversing contents in this nested module
             babelPath.skip();
@@ -202,6 +211,11 @@ function addMetadata({ types: t }) {
           let isFirstChildTestMethodCall;
 
           if (!isBeforeEach) {
+            if (!state.opts.hasHooks) {
+              moduleArgs[1].node.params.push(t.Identifier('hooks'));
+              state.opts.hasHooks = true;
+            }
+
             const testMethodCalls = ['test', 'tests', 'module'];
             let nodeName = '';
 
