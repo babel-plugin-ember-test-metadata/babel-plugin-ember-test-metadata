@@ -1,5 +1,5 @@
-import {module, test} from 'qunit';
-import {setupApplicationTest} from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
 
 const SELECTORS = Object.freeze({
   MOCK_SELECTOR: '[data-test-nav-bar-browse]',
@@ -10,7 +10,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
 
   some.otherThing(function () {
     noop();
-  })
+  });
 
   hooks.beforeEach(async function () {
     const myConst = 0;

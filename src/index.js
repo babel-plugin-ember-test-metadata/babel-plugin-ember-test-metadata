@@ -21,7 +21,7 @@ function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
 
     if (functionBlockBodyStatementsArray.length > 0) {
       existingMetadataDeclaration = functionBlockBodyStatementsArray.find(
-        hasMetadataDeclaration
+        (node) => hasMetadataDeclaration(node, t)
       );
     }
 
@@ -91,19 +91,20 @@ function shouldLoadFile(filename) {
   return filename.match(/[-_]test\.js/gi);
 }
 
-function hasMetadataDeclaration({ node }) {
+function hasMetadataDeclaration({ node }, t) {
   if (
-    node.expression &&
-    node.expression.type === 'AssignmentExpression' &&
-    node.expression.left.object
+    !node.expression ||
+    !t.isAssignmentExpression(node.expression) ||
+    !node.expression.left.object ||
+    !node.expression.left.property
   ) {
-    return (
-      node.expression.left.object.name === 'testMetadata' &&
-      node.expression.left.property.name === 'filePath'
-    );
-  } else {
     return false;
   }
+
+  return (
+    node.expression.left.object.name === 'testMetadata' &&
+    node.expression.left.property.name === 'filePath'
+  );
 }
 
 /**
