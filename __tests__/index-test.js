@@ -98,7 +98,8 @@ pluginTester({
       ),
     },
     {
-      title: 'for a module that does not pass in hooks, pass in "hooks"',
+      title:
+        "for a module's function param that does not pass in hooks, pass in hooks",
       fixture: path.join(
         __dirname,
         '__fixtures__/',
