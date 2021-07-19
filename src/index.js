@@ -182,7 +182,7 @@ function addMetadata({ types: t }) {
       CallExpression(babelPath, state) {
         if (!state.opts.shouldLoadFile) return;
 
-        // If this call expression is a top-level module, store string arg, else skip the nested module entirely
+        // If this call expression is a top-level module, store module name string, else skip the nested module entirely
         if (babelPath.get('callee').isIdentifier({ name: 'module' })) {
           if (babelPath.parentPath.parent.type === 'Program') {
             state.opts.moduleName = babelPath.get('arguments')[0].node.value;
