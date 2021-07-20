@@ -124,5 +124,13 @@ pluginTester({
         'one-module-no-beforeeach-multiple-setup-calls-test.js'
       ),
     },
+    {
+      title: 'for a module that has no function passed in, skip it',
+      fixture: path.join(
+        __dirname,
+        '__fixtures__/',
+        'one-module-no-module-function-test.js'
+      ),
+    },
   ],
 });

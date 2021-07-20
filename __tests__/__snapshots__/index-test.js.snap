@@ -63,6 +63,31 @@ module('Acceptance | browse acceptance test', function (hooks) {
 
 `;
 
+exports[`addMetadata for a module that has no function passed in, skip it: for a module that has no function passed in, skip it 1`] = `
+
+import { module, test } from 'qunit';
+
+module('Unit | Utils | test one');
+
+test('should return proper things', function testGetDots(assert) {
+  assert.expect(1);
+
+  assert.equal('true', 'true', 'pass');
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { getTestMetadata as _getTestMetadata } from '@ember/test-helpers';
+import { module, test } from 'qunit';
+module('Unit | Utils | test one');
+test('should return proper things', function testGetDots(assert) {
+  assert.expect(1);
+  assert.equal('true', 'true', 'pass');
+});
+
+
+`;
+
 exports[`addMetadata for a module with a beforeEach that is passed an async function callback, getTestMetadata statements are adding correctly: for a module with a beforeEach that is passed an async function callback, getTestMetadata statements are adding correctly 1`] = `
 
 import { module, test } from 'qunit';
@@ -203,7 +228,6 @@ module('Acceptance | browse acceptance test', function (hooks) {
       ↓ ↓ ↓ ↓ ↓ ↓
 
 import { module, test } from 'qunit';
-import { setupApplicationTest } from 'ember-qunit';
 import {
   visit,
   getTestMetadata as _getTestMetadata,

@@ -217,7 +217,6 @@ function addMetadata({ types: t }) {
         state.opts.transformedModules = [];
         state.opts.setupCall;
         state.opts.moduleFunction;
-        state.opts.hasModuleFunction;
         state.opts.hooksIdentifier;
 
         let importDeclarations = babelPath
@@ -272,6 +271,14 @@ function addMetadata({ types: t }) {
         if (babelPath.get('callee').isIdentifier({ name: 'module' })) {
           if (babelPath.parentPath.parent.type === 'Program') {
             [moduleName, moduleFunction] = babelPath.get('arguments');
+
+            const hasModuleFunction = t.isFunction(moduleFunction);
+
+            // If no 2nd arg function is passed into module(), assume it's using old test syntax,
+            // which will be supported separately. Skip entirely for now.
+            if (!hasModuleFunction) {
+              return;
+            }
 
             const moduleFunctionParams = moduleFunction
               ? moduleFunction.get('params')
