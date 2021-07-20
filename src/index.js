@@ -135,6 +135,20 @@ function getNodeProperty(node, path) {
   return property;
 }
 
+function getCalleeName(callee) {
+  if (callee.name) {
+    return callee.name;
+  } else if (callee.object) {
+    return callee.object.name;
+  } else {
+    return;
+  }
+}
+
+function isBeforeEach(callee) {
+  return callee.property ? callee.property.name === 'beforeEach' : false;
+}
+
 /**
  * Babel plugin for Ember apps that adds the filepath of the test file that Babel is processing, to
  * the testMetadata. It does this by making the following transformations to the test file:
@@ -225,22 +239,12 @@ function addMetadata({ types: t }) {
           state.opts.moduleName &&
           !state.opts.transformedModules.includes(state.opts.moduleName)
         ) {
-          const isBeforeEach = babelPath.node.callee.property
-            ? babelPath.node.callee.property.name === 'beforeEach'
-            : false;
+          const callee = babelPath.node.callee;
+          const calleeName = getCalleeName(callee);
           let isFirstChildTestMethodCall;
 
-          if (!isBeforeEach) {
-            let nodeName = '';
-
-            if (babelPath.node.callee && babelPath.node.callee.name) {
-              nodeName = babelPath.node.callee.name;
-            } else if (babelPath.node.callee.object) {
-              nodeName = babelPath.node.callee.object.name;
-            } else {
-              nodeName = babelPath.node.name;
-            }
-
+          if (!isBeforeEach(callee)) {
+            const nodeName = calleeName ? calleeName : babelPath.node.name;
             const parentCallName = getNodeProperty(
               babelPath,
               'scope.path.parentPath.node.callee.name'
@@ -252,8 +256,13 @@ function addMetadata({ types: t }) {
               parentCallName === 'module';
           }
 
-          if (isBeforeEach || isFirstChildTestMethodCall) {
-            writeTestMetadataExpressions(state, babelPath, t, isBeforeEach);
+          if (isBeforeEach(callee) || isFirstChildTestMethodCall) {
+            writeTestMetadataExpressions(
+              state,
+              babelPath,
+              t,
+              isBeforeEach(callee)
+            );
             state.opts.transformedModules.push(state.opts.moduleName);
           }
         }
