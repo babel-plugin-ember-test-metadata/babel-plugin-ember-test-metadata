@@ -149,6 +149,19 @@ function isBeforeEach(callee) {
   return callee.property ? callee.property.name === 'beforeEach' : false;
 }
 
+function isFirstChildTestMethodCall(nodeName, babelPath) {
+  const parentCallName = getNodeProperty(
+    babelPath,
+    'scope.path.parentPath.node.callee.name'
+  );
+
+  return (
+    nodeName &&
+    TEST_METHOD_CALL_NAMES.includes(nodeName) &&
+    parentCallName === 'module'
+  );
+}
+
 /**
  * Babel plugin for Ember apps that adds the filepath of the test file that Babel is processing, to
  * the testMetadata. It does this by making the following transformations to the test file:
@@ -241,22 +254,12 @@ function addMetadata({ types: t }) {
         ) {
           const callee = babelPath.node.callee;
           const calleeName = getCalleeName(callee);
-          let isFirstChildTestMethodCall;
+          const nodeName = calleeName ? calleeName : babelPath.node.name;
 
-          if (!isBeforeEach(callee)) {
-            const nodeName = calleeName ? calleeName : babelPath.node.name;
-            const parentCallName = getNodeProperty(
-              babelPath,
-              'scope.path.parentPath.node.callee.name'
-            );
-
-            isFirstChildTestMethodCall =
-              nodeName &&
-              TEST_METHOD_CALL_NAMES.includes(nodeName) &&
-              parentCallName === 'module';
-          }
-
-          if (isBeforeEach(callee) || isFirstChildTestMethodCall) {
+          if (
+            isBeforeEach(callee) ||
+            isFirstChildTestMethodCall(nodeName, babelPath)
+          ) {
             writeTestMetadataExpressions(
               state,
               babelPath,
