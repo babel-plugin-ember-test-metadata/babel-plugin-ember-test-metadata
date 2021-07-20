@@ -1,5 +1,7 @@
 const path = require('path');
 
+const TEST_METHOD_CALL_NAMES = ['test', 'tests', 'module'];
+
 /**
  * Write the test metadata expressions either into the body of the existing beforeEach, or
  * wrapped in a new beforeEach which is inserted just above the given babelPath
@@ -107,6 +109,32 @@ function hasMetadataDeclaration({ node }, t) {
   );
 }
 
+function getNodeProperty(node, path) {
+  if (!node) {
+    return;
+  }
+
+  let parts;
+  if (typeof path === 'string') {
+    parts = path.split('.');
+  } else {
+    parts = path;
+  }
+
+  if (parts.length === 1) {
+    return node[path];
+  }
+
+  let property = node[parts[0]];
+
+  if (property && parts.length > 1) {
+    parts.shift();
+    return getNodeProperty(property, parts);
+  }
+
+  return property;
+}
+
 /**
  * Babel plugin for Ember apps that adds the filepath of the test file that Babel is processing, to
  * the testMetadata. It does this by making the following transformations to the test file:
@@ -203,7 +231,6 @@ function addMetadata({ types: t }) {
           let isFirstChildTestMethodCall;
 
           if (!isBeforeEach) {
-            const testMethodCalls = ['test', 'tests', 'module'];
             let nodeName = '';
 
             if (babelPath.node.callee && babelPath.node.callee.name) {
@@ -214,13 +241,15 @@ function addMetadata({ types: t }) {
               nodeName = babelPath.node.name;
             }
 
+            const parentCallName = getNodeProperty(
+              babelPath,
+              'scope.path.parentPath.node.callee.name'
+            );
+
             isFirstChildTestMethodCall =
               nodeName &&
-              testMethodCalls.includes(nodeName) &&
-              babelPath.scope.path.parentPath &&
-              babelPath.scope.path.parentPath.node &&
-              babelPath.scope.path.parentPath.node.callee &&
-              babelPath.scope.path.parentPath.node.callee.name === 'module';
+              TEST_METHOD_CALL_NAMES.includes(nodeName) &&
+              parentCallName === 'module';
           }
 
           if (isBeforeEach || isFirstChildTestMethodCall) {
