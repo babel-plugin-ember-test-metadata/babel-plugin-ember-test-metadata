@@ -72,15 +72,6 @@ pluginTester({
     },
     {
       title:
-        'for modules without any beforeEach, it adds a new beforeEach after the first call of either "test", "skip" or "todo"',
-      fixture: path.join(
-        __dirname,
-        '__fixtures__/',
-        'multiple-module-no-beforeeach-test-skip-todo-input-test.js'
-      ),
-    },
-    {
-      title:
         'for nested modules without any beforeEach, it adds a new beforeEach before the first nested module call',
       fixture: path.join(
         __dirname,
@@ -95,6 +86,33 @@ pluginTester({
         __dirname,
         '__fixtures__/',
         'nested-modules-with-beforeeach-import-exists-input-test.js'
+      ),
+    },
+    {
+      title:
+        'for a module without any beforeEach and without any setup calls, it adds a new beforeEach at the top of the module',
+      fixture: path.join(
+        __dirname,
+        '__fixtures__/',
+        'one-module-no-beforeeach-no-setup-test.js'
+      ),
+    },
+    {
+      title:
+        "for a module's function param that does not pass in hooks, pass in hooks",
+      fixture: path.join(
+        __dirname,
+        '__fixtures__/',
+        'one-module-one-beforeeach-no-hooks-new-import-input-test.js'
+      ),
+    },
+    {
+      title:
+        'for a module without a beforeEach and where its function param passes in a custom hooks name, create our new beforeEach called from their custom hooks object',
+      fixture: path.join(
+        __dirname,
+        '__fixtures__/',
+        'one-module-no-beforeeach-custom-hooks-name-test.js'
       ),
     },
   ],
