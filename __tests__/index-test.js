@@ -94,7 +94,7 @@ pluginTester({
       fixture: path.join(
         __dirname,
         '__fixtures__/',
-        'one-module-no-beforeeach-no-setup-test.js'
+        'one-module-no-beforeeach-no-hooks-no-setup-test.js'
       ),
     },
     {
@@ -103,7 +103,7 @@ pluginTester({
       fixture: path.join(
         __dirname,
         '__fixtures__/',
-        'one-module-one-beforeeach-no-hooks-new-import-input-test.js'
+        'one-module-no-beforeeach-no-hooks-test.js'
       ),
     },
     {

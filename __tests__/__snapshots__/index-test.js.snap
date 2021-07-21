@@ -172,14 +172,13 @@ module('Acceptance | browse acceptance test', function (adsHooksV2) {
 exports[`addMetadata for a module without any beforeEach and without any setup calls, it adds a new beforeEach at the top of the module: for a module without any beforeEach and without any setup calls, it adds a new beforeEach at the top of the module 1`] = `
 
 import { module, test } from 'qunit';
-import { setupApplicationTest } from 'ember-qunit';
-import { click, visit } from '@ember/test-helpers';
+import { visit } from '@ember/test-helpers';
 
 const SELECTORS = Object.freeze({
   MOCK_SELECTOR: '[data-test-nav-bar-browse]',
 });
 
-module('Acceptance | browse acceptance test', function (hooks) {
+module('Acceptance | browse acceptance test', function () {
   test('it renders browse page', async function (assert) {
     await visit(BROWSE_URL);
     assert.dom(SELECTORS.MOCK_SELECTOR).exists();
@@ -189,9 +188,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
       ↓ ↓ ↓ ↓ ↓ ↓
 
 import { module, test } from 'qunit';
-import { setupApplicationTest } from 'ember-qunit';
 import {
-  click,
   visit,
   getTestMetadata as _getTestMetadata,
 } from '@ember/test-helpers';
@@ -203,7 +200,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
     let testMetadata = _getTestMetadata(this);
 
     testMetadata.filePath =
-      '__tests__/__fixtures__/one-module-no-beforeeach-no-setup-test.js';
+      '__tests__/__fixtures__/one-module-no-beforeeach-no-hooks-no-setup-test.js';
   });
   test('it renders browse page', async function (assert) {
     await visit(BROWSE_URL);
@@ -240,7 +237,7 @@ module('Unit | foo', function (hooks) {
     let testMetadata = _getTestMetadata(this);
 
     testMetadata.filePath =
-      '__tests__/__fixtures__/one-module-one-beforeeach-no-hooks-new-import-input-test.js';
+      '__tests__/__fixtures__/one-module-no-beforeeach-no-hooks-test.js';
   });
   test('foo', async function (assert) {
     assert.equal('bar', 'bar');
