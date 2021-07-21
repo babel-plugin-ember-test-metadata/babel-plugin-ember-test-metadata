@@ -169,6 +169,64 @@ module('Acceptance | browse acceptance test', function (adsHooksV2) {
 
 `;
 
+exports[`addMetadata for a module without a beforeEach and with multiple setup calls, insert our new beforeEach after the setup calls: for a module without a beforeEach and with multiple setup calls, insert our new beforeEach after the setup calls 1`] = `
+
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import { visit } from '@ember/test-helpers';
+
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  setupTwo(hooks);
+  setupThree(hooks);
+
+  some.otherThing(function () {
+    noop();
+  });
+
+  test.only('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import {
+  visit,
+  getTestMetadata as _getTestMetadata,
+} from '@ember/test-helpers';
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  setupTwo(hooks);
+  setupThree(hooks);
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/one-module-no-beforeeach-multiple-setup-calls-test.js';
+  });
+  some.otherThing(function () {
+    noop();
+  });
+  test.only('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+
+`;
+
 exports[`addMetadata for a module without any beforeEach and without any setup calls, it adds a new beforeEach at the top of the module: for a module without any beforeEach and without any setup calls, it adds a new beforeEach at the top of the module 1`] = `
 
 import { module, test } from 'qunit';

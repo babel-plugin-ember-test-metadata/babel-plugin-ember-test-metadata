@@ -115,5 +115,14 @@ pluginTester({
         'one-module-no-beforeeach-custom-hooks-name-test.js'
       ),
     },
+    {
+      title:
+        'for a module without a beforeEach and with multiple setup calls, insert our new beforeEach after the setup calls',
+      fixture: path.join(
+        __dirname,
+        '__fixtures__/',
+        'one-module-no-beforeeach-multiple-setup-calls-test.js'
+      ),
+    },
   ],
 });

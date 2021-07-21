@@ -29,11 +29,9 @@ function getLastSetupCall(callsArray, t, hooksIdentifier) {
   if (callsArray.length === 1 && isSetupCall(callsArray[0], t, hooksIdentifier))
     return callsArray[0];
 
-  for (let i = 0; i < callsArray.length; i++) {
-    if (
-      callsArray[i + 1] &&
-      !isSetupCall(callsArray[i + 1], t, hooksIdentifier)
-    ) {
+  for (let nextCall, i = 0; i < callsArray.length; i++) {
+    nextCall = callsArray[i + 1];
+    if (nextCall && !isSetupCall(nextCall, t, hooksIdentifier)) {
       return callsArray[i];
     }
   }
@@ -54,9 +52,9 @@ function isBeforeEach(callee) {
  * @returns {object} Babel node path call expression of a beforeEach call
  */
 function getExistingBeforeEach(callsArray) {
-  for (let i = 0; i < callsArray.length; i++) {
-    if (isBeforeEach(callsArray[i].node.expression.callee)) {
-      return callsArray[i].get('expression');
+  for (const call of callsArray) {
+    if (isBeforeEach(call.node.expression.callee)) {
+      return call.get('expression');
     }
   }
 }
@@ -99,7 +97,7 @@ function addMetaDataToBeforeEach(state, beforeEachExpression, t) {
  * @param {object} state - Babel state
  * @param {object} t  - Babel types
  */
-function writeNewBeforeEach(state, t) {
+function insertNewBeforeEach(state, t) {
   const testMetadataVarDeclaration = getTestMetadataDeclaration(state, t);
   const testMetadataAssignment = getTestMetadataAssignment(state, t);
   const beforeEachFunc = t.functionExpression(
@@ -258,16 +256,8 @@ function addMetadata({ types: t }) {
       },
 
       /**
-       * Do transforms for adding our test metadata expressions to beforeEach.
        * For each top-level module (in QUnit there can be sibling and/or nested modules), only 1 beforeEach should apply,
        * and so only 1 beforeEach will be added/transformed per top-level module.
-       *
-       * While inside a top-level module, we:
-       * 1. check for any existing beforeEach call
-       * 2. else, check for any test setup call expressions, e.g. setupApplication(hooks)
-       *
-       * If there is an existing beforeEach, we add our statements to it. Otherwise, we add a new beforeEach, either
-       * after any test setup calls or at the top of the test module.
        *
        * The transformed beforeEach would look like:
           hooks.beforeEach(function () {
@@ -330,7 +320,7 @@ function addMetadata({ types: t }) {
               state.opts.hooksIdentifier
             );
             state.opts.setupCall = lastSetupCall;
-            writeNewBeforeEach(state, t);
+            insertNewBeforeEach(state, t);
           }
         }
       },
