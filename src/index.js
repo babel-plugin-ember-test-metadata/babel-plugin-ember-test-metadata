@@ -1,51 +1,88 @@
 const path = require('path');
 
-const TEST_METHOD_CALL_NAMES = ['test', 'tests', 'module'];
+function isSetupCall({ node }, t, hooksIdentifier) {
+  return (
+    t.isCallExpression(node.expression) &&
+    t.isIdentifier(node.expression.arguments[0]) &&
+    node.expression.arguments[0].name === hooksIdentifier
+  );
+}
 
-/**
- * Write the test metadata expressions either into the body of the existing beforeEach, or
- * wrapped in a new beforeEach which is inserted just above the given babelPath
- * @param {object} state - Babel state
- * @param {object} babelPath - Babel path
- * @param {object} t  - Babel types
- * @param {boolean} hasBeforeEach  - if true, write expressions into existing beforeEach,
- *   otherwise write a new beforeEach
- */
-function writeTestMetadataExpressions(state, babelPath, t, hasBeforeEach) {
+function getLastSetupCall(callsArray, t, hooksIdentifier) {
+  if (callsArray.length === 1 && isSetupCall(callsArray[0], t, hooksIdentifier))
+    return callsArray[0];
+
+  for (let i = 0; i < callsArray.length; i++) {
+    if (
+      callsArray[i + 1] &&
+      !isSetupCall(callsArray[i + 1], t, hooksIdentifier)
+    ) {
+      return callsArray[i];
+    }
+  }
+}
+
+function isBeforeEach(callee) {
+  return callee.property && callee.property.name === 'beforeEach';
+}
+
+function getExistingBeforeEach(callsArray) {
+  for (let i = 0; i < callsArray.length; i++) {
+    if (isBeforeEach(callsArray[i].node.expression.callee)) {
+      return callsArray[i].get('expression');
+    }
+  }
+}
+
+function addMetaDataToBeforeEach(state, beforeEachExpression, t) {
   const testMetadataVarDeclaration = getTestMetadataDeclaration(state, t);
   const testMetadataAssignment = getTestMetadataAssignment(state, t);
 
-  if (hasBeforeEach) {
-    const functionBlock = babelPath.get('arguments')[0];
-    const functionBlockBody = functionBlock.get('body');
-    const functionBlockBodyStatementsArray = functionBlockBody.get('body');
-    let existingMetadataDeclaration;
+  const functionBlock = beforeEachExpression.get('arguments')[0];
+  const functionBlockBody = functionBlock.get('body');
+  const functionBlockBodyStatementsArray = functionBlockBody.get('body');
+  let existingMetadataDeclaration;
 
-    if (functionBlockBodyStatementsArray.length > 0) {
-      existingMetadataDeclaration = functionBlockBodyStatementsArray.find(
-        (node) => hasMetadataDeclaration(node, t)
-      );
-    }
-
-    if (!existingMetadataDeclaration) {
-      functionBlockBody.unshiftContainer('body', testMetadataAssignment);
-      functionBlockBody.unshiftContainer('body', testMetadataVarDeclaration);
-    }
-  } else {
-    const beforeEachFunc = t.functionExpression(
-      null,
-      [],
-      t.blockStatement([testMetadataVarDeclaration, testMetadataAssignment])
+  if (functionBlockBodyStatementsArray.length > 0) {
+    existingMetadataDeclaration = functionBlockBodyStatementsArray.find(
+      (node) => hasMetadataDeclaration(node, t)
     );
-    const beforeEachExpression = t.expressionStatement(
-      t.callExpression(
-        t.memberExpression(t.identifier('hooks'), t.identifier('beforeEach')),
-        [beforeEachFunc]
-      )
-    );
-
-    babelPath.insertBefore(beforeEachExpression);
   }
+
+  if (!existingMetadataDeclaration) {
+    functionBlockBody.unshiftContainer('body', testMetadataAssignment);
+    functionBlockBody.unshiftContainer('body', testMetadataVarDeclaration);
+
+    state.opts.transformedModules.push(state.opts.moduleName);
+  }
+}
+
+function writeNewBeforeEach(state, t) {
+  const testMetadataVarDeclaration = getTestMetadataDeclaration(state, t);
+  const testMetadataAssignment = getTestMetadataAssignment(state, t);
+  const beforeEachFunc = t.functionExpression(
+    null,
+    [],
+    t.blockStatement([testMetadataVarDeclaration, testMetadataAssignment])
+  );
+  const beforeEachExpression = t.expressionStatement(
+    t.callExpression(
+      t.memberExpression(
+        t.identifier(state.opts.hooksIdentifier),
+        t.identifier('beforeEach')
+      ),
+      [beforeEachFunc]
+    )
+  );
+
+  if (state.opts.setupCall) {
+    state.opts.setupCall.insertAfter(beforeEachExpression);
+  } else {
+    const moduleFunctionBlockBody = state.opts.moduleFunction.get('body');
+    moduleFunctionBlockBody.unshiftContainer('body', beforeEachExpression);
+  }
+
+  state.opts.transformedModules.push(state.opts.moduleName);
 }
 
 /**
@@ -87,10 +124,6 @@ function getTestMetadataDeclaration(state, t) {
       getTestMetadataExpression
     ),
   ]);
-}
-
-function shouldLoadFile(filename) {
-  return filename.match(/[-_]test\.js/gi);
 }
 
 function hasMetadataDeclaration({ node }, t) {
@@ -135,31 +168,8 @@ function getNodeProperty(node, path) {
   return property;
 }
 
-function getCalleeName(callee) {
-  if (callee.name) {
-    return callee.name;
-  } else if (callee.object) {
-    return callee.object.name;
-  } else {
-    return;
-  }
-}
-
-function isBeforeEach(callee) {
-  return callee.property ? callee.property.name === 'beforeEach' : false;
-}
-
-function isFirstChildTestMethodCall(nodeName, babelPath) {
-  const parentCallName = getNodeProperty(
-    babelPath,
-    'scope.path.parentPath.node.callee.name'
-  );
-
-  return (
-    nodeName &&
-    TEST_METHOD_CALL_NAMES.includes(nodeName) &&
-    parentCallName === 'module'
-  );
+function shouldLoadFile(filename) {
+  return filename.match(/[-_]test\.js/gi);
 }
 
 /**
@@ -185,6 +195,10 @@ function addMetadata({ types: t }) {
         }
 
         state.opts.transformedModules = [];
+        state.opts.setupCall;
+        state.opts.moduleFunction;
+        state.opts.hasModuleFunction;
+        state.opts.hooksIdentifier;
 
         let importDeclarations = babelPath
           .get('body')
@@ -238,10 +252,24 @@ function addMetadata({ types: t }) {
       CallExpression(babelPath, state) {
         if (!state.opts.shouldLoadFile) return;
 
+        let moduleName;
+        let moduleFunction;
+
         // If this call expression is a top-level module, store module name string, else skip the nested module entirely
         if (babelPath.get('callee').isIdentifier({ name: 'module' })) {
           if (babelPath.parentPath.parent.type === 'Program') {
-            state.opts.moduleName = babelPath.get('arguments')[0].node.value;
+            [moduleName, moduleFunction] = babelPath.get('arguments');
+
+            const moduleFunctionParams = moduleFunction
+              ? moduleFunction.get('params')
+              : [];
+
+            state.opts.hooksIdentifier = getNodeProperty(
+              moduleFunctionParams[0],
+              'node.name'
+            );
+            state.opts.moduleName = moduleName.node.value;
+            state.opts.moduleFunction = moduleFunction;
           } else {
             // skip traversing contents in this nested module
             babelPath.skip();
@@ -252,21 +280,29 @@ function addMetadata({ types: t }) {
           state.opts.moduleName &&
           !state.opts.transformedModules.includes(state.opts.moduleName)
         ) {
-          const callee = babelPath.node.callee;
-          const calleeName = getCalleeName(callee);
-          const nodeName = calleeName ? calleeName : babelPath.node.name;
+          if (!state.opts.hooksIdentifier) {
+            state.opts.moduleFunction.node.params.push(t.Identifier('hooks'));
+            state.opts.hooksIdentifier = 'hooks';
+          }
 
-          if (
-            isBeforeEach(callee) ||
-            isFirstChildTestMethodCall(nodeName, babelPath)
-          ) {
-            writeTestMetadataExpressions(
-              state,
-              babelPath,
+          const moduleFunctionBlock = state.opts.moduleFunction.get('body');
+          const moduleFunctionBodyArray = moduleFunctionBlock.get('body');
+          const existingBeforeEach = getExistingBeforeEach(
+            moduleFunctionBodyArray,
+            t,
+            state.opts.hooksIdentifier
+          );
+
+          if (existingBeforeEach) {
+            addMetaDataToBeforeEach(state, existingBeforeEach, t);
+          } else {
+            const lastSetupCall = getLastSetupCall(
+              moduleFunctionBodyArray,
               t,
-              isBeforeEach(callee)
+              state.opts.hooksIdentifier
             );
-            state.opts.transformedModules.push(state.opts.moduleName);
+            state.opts.setupCall = lastSetupCall;
+            writeNewBeforeEach(state, t);
           }
         }
       },

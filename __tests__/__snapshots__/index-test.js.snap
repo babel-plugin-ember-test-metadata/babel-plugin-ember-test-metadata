@@ -218,14 +218,14 @@ const SELECTORS = Object.freeze({
 });
 module('Acceptance | browse acceptance test', function (hooks) {
   setupApplicationTest(hooks);
-  some.otherThing(function () {
-    noop();
-  });
   hooks.beforeEach(function () {
     let testMetadata = _getTestMetadata(this);
 
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-no-beforeeach-test-member-input-test.js';
+  });
+  some.otherThing(function () {
+    noop();
   });
   test.only('it renders browse page', async function (assert) {
     await visit(BROWSE_URL);
@@ -273,14 +273,14 @@ const SELECTORS = Object.freeze({
 });
 module('Acceptance | browse acceptance test', function (hooks) {
   setupApplicationTest(hooks);
-  some.otherThing(function () {
-    noop();
-  });
   hooks.beforeEach(function () {
     let testMetadata = _getTestMetadata(this);
 
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-no-beforeeach-import-exists-input-test.js';
+  });
+  some.otherThing(function () {
+    noop();
   });
   test('it renders browse page', async function (assert) {
     await visit(BROWSE_URL);
@@ -436,14 +436,14 @@ const SELECTORS = Object.freeze({
 });
 module('Acceptance | browse acceptance test', function (hooks) {
   setupApplicationTest(hooks);
-  some.otherThing(function () {
-    noop();
-  });
   hooks.beforeEach(function () {
     let testMetadata = _getTestMetadata(this);
 
     testMetadata.filePath =
       '__tests__/__fixtures__/multiple-module-no-beforeeach-test-skip-todo-input-test.js';
+  });
+  some.otherThing(function () {
+    noop();
   });
   test.only('it renders browse page', async function (assert) {
     await visit(BROWSE_URL);
@@ -452,14 +452,14 @@ module('Acceptance | browse acceptance test', function (hooks) {
 });
 module('Acceptance | search acceptance test', function (hooks) {
   setupApplicationTest(hooks);
-  some.otherThing(function () {
-    noop();
-  });
   hooks.beforeEach(function () {
     let testMetadata = _getTestMetadata(this);
 
     testMetadata.filePath =
       '__tests__/__fixtures__/multiple-module-no-beforeeach-test-skip-todo-input-test.js';
+  });
+  some.otherThing(function () {
+    noop();
   });
   test.skip('it renders search page', async function (assert) {
     await visit(BROWSE_URL);
@@ -520,14 +520,14 @@ const SELECTORS = Object.freeze({
 });
 module('Acceptance | browse acceptance test', function (hooks) {
   setupApplicationTest(hooks);
-  some.otherThing(function () {
-    noop();
-  });
   hooks.beforeEach(function () {
     let testMetadata = _getTestMetadata(this);
 
     testMetadata.filePath =
       '__tests__/__fixtures__/multiple-module-no-beforeeach-import-exists-input-test.js';
+  });
+  some.otherThing(function () {
+    noop();
   });
   test('it renders browse page', async function (assert) {
     await visit(BROWSE_URL);
@@ -536,14 +536,14 @@ module('Acceptance | browse acceptance test', function (hooks) {
 });
 module('Acceptance | search acceptance test', function (hooks) {
   setupApplicationTest(hooks);
-  some.otherThing(function () {
-    noop();
-  });
   hooks.beforeEach(function () {
     let testMetadata = _getTestMetadata(this);
 
     testMetadata.filePath =
       '__tests__/__fixtures__/multiple-module-no-beforeeach-import-exists-input-test.js';
+  });
+  some.otherThing(function () {
+    noop();
   });
   test('it renders search', async function (assert) {
     await visit(BROWSE_URL);
@@ -680,14 +680,14 @@ const SELECTORS = Object.freeze({
 });
 module('Acceptance | browse acceptance test', function (hooks) {
   setupApplicationTest(hooks);
-  some.otherThing(function () {
-    noop();
-  });
   hooks.beforeEach(function () {
     let testMetadata = _getTestMetadata(this);
 
     testMetadata.filePath =
       '__tests__/__fixtures__/nested-modules-no-beforeeach-import-exists-input-test.js';
+  });
+  some.otherThing(function () {
+    noop();
   });
   module('nested module', () => {
     test('a test', () => {});
