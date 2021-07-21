@@ -1,5 +1,13 @@
 const path = require('path');
 
+/**
+ * Checks if the call expression matches a test setup call pattern.
+ * @param {object} Babel node object
+ * @param {object} t Babel types
+ * @param {string} hooksIdentifier - "hooks" passed into module's function arg
+ * @returns {Boolean} - if the call expression has a setup call pattern,
+ *   e.g. setupApplication(hooks), then return true
+ */
 function isSetupCall({ node }, t, hooksIdentifier) {
   return (
     t.isCallExpression(node.expression) &&
@@ -8,6 +16,13 @@ function isSetupCall({ node }, t, hooksIdentifier) {
   );
 }
 
+/**
+ * Gets the last setup call expression node path.
+ * @param {array} callsArray Babel array of call expression node paths representing calls within a function block
+ * @param {object} t Babel types
+ * @param {string} hooksIdentifier - "hooks" passed into module's function arg
+ * @returns {object} a Babel node path that is the last setup call expression, e.g. setupApplication(hooks)
+ */
 function getLastSetupCall(callsArray, t, hooksIdentifier) {
   if (callsArray.length === 1 && isSetupCall(callsArray[0], t, hooksIdentifier))
     return callsArray[0];
@@ -22,10 +37,20 @@ function getLastSetupCall(callsArray, t, hooksIdentifier) {
   }
 }
 
+/**
+ * Checks if the call expression is a beforeEach call.
+ * @param {object} callee Babel node expression path
+ * @returns {Boolean}
+ */
 function isBeforeEach(callee) {
   return callee.property && callee.property.name === 'beforeEach';
 }
 
+/**
+ * Gets any existing beforeEach call as a node path.
+ * @param {array} callsArray Babel array of call expression node paths representing calls within a function block
+ * @returns {object} Babel node path call expression of a beforeEach call
+ */
 function getExistingBeforeEach(callsArray) {
   for (let i = 0; i < callsArray.length; i++) {
     if (isBeforeEach(callsArray[i].node.expression.callee)) {
@@ -34,6 +59,13 @@ function getExistingBeforeEach(callsArray) {
   }
 }
 
+/**
+ * Adds test metadata statements to the top of an existing beforeEach call function block.
+ * Updates state.opts.transformedModules [] with the name of the test module transformed.
+ * @param {object} state - Babel state
+ * @param {object} beforeEachExpression - the beforeEach Babel call expression
+ * @param {object} t Babel types
+ */
 function addMetaDataToBeforeEach(state, beforeEachExpression, t) {
   const testMetadataVarDeclaration = getTestMetadataDeclaration(state, t);
   const testMetadataAssignment = getTestMetadataAssignment(state, t);
@@ -57,6 +89,14 @@ function addMetaDataToBeforeEach(state, beforeEachExpression, t) {
   }
 }
 
+/**
+ * Creates a new beforeEach call with the test metadata statements.
+ * Inserts this new beforeEach below any existing setup calls, else
+ * at the top of the test module function block.
+ * Updates state.opts.transformedModules [] with the name of the test module transformed.
+ * @param {object} state - Babel state
+ * @param {object} t  - Babel types
+ */
 function writeNewBeforeEach(state, t) {
   const testMetadataVarDeclaration = getTestMetadataDeclaration(state, t);
   const testMetadataAssignment = getTestMetadataAssignment(state, t);
@@ -126,6 +166,12 @@ function getTestMetadataDeclaration(state, t) {
   ]);
 }
 
+/**
+ * Checks whether a test metadata statement already exists.
+ * @param {object} node - Babel node path
+ * @param {object} t - Babel types
+ * @returns {Boolean}
+ */
 function hasMetadataDeclaration({ node }, t) {
   if (
     !node.expression ||
@@ -142,6 +188,12 @@ function hasMetadataDeclaration({ node }, t) {
   );
 }
 
+/**
+ * Utility to get a property from a given path
+ * @param {object} node
+ * @param {string} path
+ * @returns property value
+ */
 function getNodeProperty(node, path) {
   if (!node) {
     return;
@@ -168,6 +220,11 @@ function getNodeProperty(node, path) {
   return property;
 }
 
+/**
+ * Checks for files ending with "-test.js" or "_test.js"
+ * @param {string} filename File name which may include file path
+ * @returns {Boolean}
+ */
 function shouldLoadFile(filename) {
   return filename.match(/[-_]test\.js/gi);
 }
@@ -233,13 +290,14 @@ function addMetadata({ types: t }) {
       /**
        * Do transforms for adding our test metadata expressions to beforeEach.
        * For each top-level module (in QUnit there can be sibling and/or nested modules), only 1 beforeEach should apply,
-       * and so only 1 beforeEach will be added/transformed per top-level module. As Babel traverses through each call
-       * expression, we're only concerned about operating on call expressions inside of top-level module calls.
+       * and so only 1 beforeEach will be added/transformed per top-level module.
        *
-       * While inside a top-level module, we check the current call expression for either of these conditions:
-       *   1. if it's a beforeEach, then we add our test metadata expressions to it.
-       *   2. if it's a call to either "test" or to a nested "module", then we want to add a new beforeEach just above it
-       * If the current call is neither of these, then do nothing. Babel will move on to the next call expression.
+       * While inside a top-level module, we:
+       * 1. check for any existing beforeEach call
+       * 2. else, check for any test setup call expressions, e.g. setupApplication(hooks)
+       *
+       * If there is an existing beforeEach, we add our statements to it. Otherwise, we add a new beforeEach, either
+       * after any test setup calls or at the top of the test module.
        *
        * The transformed beforeEach would look like:
           hooks.beforeEach(function () {
