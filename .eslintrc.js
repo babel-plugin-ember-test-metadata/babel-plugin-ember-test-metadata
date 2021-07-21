@@ -4,14 +4,17 @@ module.exports = {
     node: true,
   },
   plugins: ['node', 'prettier'],
-  extends: [
-    'eslint:recommended',
-    'plugin:node/recommended',
-    'prettier',
-  ],
+  extends: ['eslint:recommended', 'plugin:node/recommended', 'prettier'],
   parserOptions: {
     ecmaVersion: 2019,
     sourceType: 'script',
   },
-  rules: {},
+  overrides: [
+    {
+      files: ['__tests__/**/*.js'],
+      env: {
+        jest: true,
+      },
+    },
+  ],
 };
