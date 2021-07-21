@@ -77,7 +77,7 @@ function addMetaDataToBeforeEach(state, beforeEachExpression, t) {
 
   if (functionBlockBodyStatementsArray.length > 0) {
     existingMetadataDeclaration = functionBlockBodyStatementsArray.find(
-      (node) => hasMetadataDeclaration(node, t)
+      (node) => hasMetadataDeclaration(node)
     );
   }
 
@@ -172,19 +172,10 @@ function getTestMetadataDeclaration(state, t) {
  * @param {object} t - Babel types
  * @returns {Boolean}
  */
-function hasMetadataDeclaration({ node }, t) {
-  if (
-    !node.expression ||
-    !t.isAssignmentExpression(node.expression) ||
-    !node.expression.left.object ||
-    !node.expression.left.property
-  ) {
-    return false;
-  }
-
+function hasMetadataDeclaration({ node }) {
   return (
-    node.expression.left.object.name === 'testMetadata' &&
-    node.expression.left.property.name === 'filePath'
+    getNodeProperty(node.expression, 'left.object.name') === 'testMetadata' &&
+    getNodeProperty(node.expression, 'left.property.name') === 'filePath'
   );
 }
 
