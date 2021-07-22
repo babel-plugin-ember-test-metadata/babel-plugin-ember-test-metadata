@@ -228,6 +228,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
       ↓ ↓ ↓ ↓ ↓ ↓
 
 import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
 import {
   visit,
   getTestMetadata as _getTestMetadata,
