@@ -48,13 +48,16 @@ function isBeforeEach(callee) {
 
 /**
  * Gets any existing beforeEach call as a node path.
- * @param {array} callsArray Babel array of call expression node paths representing calls within a function block
+ * @param {array} nodes Babel array of node paths within a function block
  * @returns {object} Babel node path call expression of a beforeEach call
  */
-function getExistingBeforeEach(callsArray) {
-  for (const call of callsArray) {
-    if (isBeforeEach(call.node.expression.callee)) {
-      return call.get('expression');
+function getExistingBeforeEach(nodes, t) {
+  for (const node of nodes) {
+    if (
+      t.isExpressionStatement(node) &&
+      isBeforeEach(getNodeProperty(node, 'node.expression.callee'))
+    ) {
+      return node.get('expression');
     }
   }
 }
@@ -298,8 +301,7 @@ function addMetadata({ types: t }) {
           const moduleFunctionBodyArray = moduleFunctionBlock.get('body');
           const existingBeforeEach = getExistingBeforeEach(
             moduleFunctionBodyArray,
-            t,
-            state.opts.hooksIdentifier
+            t
           );
 
           if (existingBeforeEach) {

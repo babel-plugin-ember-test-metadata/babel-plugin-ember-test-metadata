@@ -11,6 +11,8 @@ module('Acceptance | browse acceptance test', function (hooks) {
   setupTwo(hooks);
   setupThree(hooks);
 
+  const appVersion = '0.0.1';
+
   some.otherThing(function () {
     noop();
   });

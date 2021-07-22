@@ -184,6 +184,8 @@ module('Acceptance | browse acceptance test', function (hooks) {
   setupTwo(hooks);
   setupThree(hooks);
 
+  const appVersion = '0.0.1';
+
   some.otherThing(function () {
     noop();
   });
@@ -215,6 +217,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-no-beforeeach-multiple-setup-calls-test.js';
   });
+  const appVersion = '0.0.1';
   some.otherThing(function () {
     noop();
   });
