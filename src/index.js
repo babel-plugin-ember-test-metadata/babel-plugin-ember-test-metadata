@@ -304,8 +304,11 @@ function addMetadata({ types: t }) {
             moduleFunctionBodyArray,
             t
           );
+          const beforeEachArgIsFunction =
+            existingBeforeEach &&
+            t.isFunction(existingBeforeEach.get('arguments')[0]);
 
-          if (existingBeforeEach) {
+          if (existingBeforeEach && beforeEachArgIsFunction) {
             insertMetaDataInBeforeEach(state, existingBeforeEach, t);
           } else {
             const lastSetupCall = getLastSetupCall(

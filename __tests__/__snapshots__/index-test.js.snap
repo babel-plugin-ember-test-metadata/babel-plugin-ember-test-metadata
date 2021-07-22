@@ -121,6 +121,54 @@ module('Acceptance | browse acceptance test', function (hooks) {
 
 `;
 
+exports[`addMetadata for a module with a beforeEach that is passed in an identifier (non-inline function), add our new beforeEach above theirs: for a module with a beforeEach that is passed in an identifier (non-inline function), add our new beforeEach above theirs 1`] = `
+
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import { beforeEachSetup } from 'before-each-setup';
+
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+
+  hooks.beforeEach(beforeEachSetup);
+
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { getTestMetadata as _getTestMetadata } from '@ember/test-helpers';
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import { beforeEachSetup } from 'before-each-setup';
+const SELECTORS = Object.freeze({
+  MOCK_SELECTOR: '[data-test-nav-bar-browse]',
+});
+module('Acceptance | browse acceptance test', function (hooks) {
+  setupApplicationTest(hooks);
+  hooks.beforeEach(function () {
+    let testMetadata = _getTestMetadata(this);
+
+    testMetadata.filePath =
+      '__tests__/__fixtures__/one-module-one-beforeeach-arg-not-inline-func-test.js';
+  });
+  hooks.beforeEach(beforeEachSetup);
+  test('it renders browse page', async function (assert) {
+    await visit(BROWSE_URL);
+    assert.dom(SELECTORS.MOCK_SELECTOR).exists();
+  });
+});
+
+
+`;
+
 exports[`addMetadata for a module without a beforeEach and where its function param passes in a custom hooks name, create our new beforeEach called from their custom hooks object: for a module without a beforeEach and where its function param passes in a custom hooks name, create our new beforeEach called from their custom hooks object 1`] = `
 
 import { module, test } from 'qunit';

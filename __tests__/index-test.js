@@ -124,5 +124,14 @@ pluginTester({
         'one-module-no-beforeeach-multiple-setup-calls-test.js'
       ),
     },
+    {
+      title:
+        'for a module with a beforeEach that is passed in an identifier (non-inline function), add our new beforeEach above theirs',
+      fixture: path.join(
+        __dirname,
+        '__fixtures__/',
+        'one-module-one-beforeeach-arg-not-inline-func-test.js'
+      ),
+    },
   ],
 });
