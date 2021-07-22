@@ -42,7 +42,7 @@ function getLastSetupCall(callsArray, t, hooksIdentifier) {
  * @param {object} node Babel node expression path
  * @returns {Boolean}
  */
- function isBeforeEach(node) {
+function isBeforeEach(node) {
   const calleePropertyName = getNodeProperty(node, 'property.name');
   return calleePropertyName === 'beforeEach';
 }
@@ -70,7 +70,7 @@ function getExistingBeforeEach(nodes, t) {
  * @param {object} beforeEachExpression - the beforeEach Babel call expression
  * @param {object} t Babel types
  */
-function addMetaDataToBeforeEach(state, beforeEachExpression, t) {
+function insertMetaDataInBeforeEach(state, beforeEachExpression, t) {
   const testMetadataVarDeclaration = getTestMetadataDeclaration(state, t);
   const testMetadataAssignment = getTestMetadataAssignment(state, t);
 
@@ -306,7 +306,7 @@ function addMetadata({ types: t }) {
           );
 
           if (existingBeforeEach) {
-            addMetaDataToBeforeEach(state, existingBeforeEach, t);
+            insertMetaDataInBeforeEach(state, existingBeforeEach, t);
           } else {
             const lastSetupCall = getLastSetupCall(
               moduleFunctionBodyArray,
