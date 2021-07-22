@@ -38,12 +38,13 @@ function getLastSetupCall(callsArray, t, hooksIdentifier) {
 }
 
 /**
- * Checks if the call expression is a beforeEach call.
- * @param {object} callee Babel node expression path
+ * Checks if the node is a beforeEach call.
+ * @param {object} node Babel node expression path
  * @returns {Boolean}
  */
-function isBeforeEach(callee) {
-  return callee.property && callee.property.name === 'beforeEach';
+ function isBeforeEach(node) {
+  const calleePropertyName = getNodeProperty(node, 'property.name');
+  return calleePropertyName === 'beforeEach';
 }
 
 /**

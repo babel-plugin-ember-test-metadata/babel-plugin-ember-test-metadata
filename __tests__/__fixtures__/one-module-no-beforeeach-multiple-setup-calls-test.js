@@ -12,6 +12,10 @@ module('Acceptance | browse acceptance test', function (hooks) {
   setupThree(hooks);
 
   const appVersion = '0.0.1';
+  this.nextItem = {
+    bookmark: {},
+    title: 'foo',
+  };
 
   some.otherThing(function () {
     noop();
