@@ -75,7 +75,7 @@ function insertMetaDataInBeforeEach(state, beforeEachExpression, t) {
 
   const functionBlock = beforeEachExpression.get('arguments')[0];
   const functionBlockBody = functionBlock.get('body');
-  const functionBlockBodyStatementsArray = functionBlockBody.get('body');
+  const functionBlockBodyStatementsArray = functionBlockBody ? functionBlockBody.get('body') : [];
   let existingMetadataDeclaration;
 
   if (functionBlockBodyStatementsArray.length > 0) {
