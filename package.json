@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-ember-test-metadata",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.1",
   "description": "A Babel plugin for Ember apps that adds a test's file path to test metadata",
   "keywords": [],
   "repository": "https://github.com/babel-plugin-ember-test-metadata/babel-plugin-ember-test-metadata",
