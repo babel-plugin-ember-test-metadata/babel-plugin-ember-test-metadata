@@ -75,7 +75,9 @@ function insertMetaDataInBeforeEach(state, beforeEachExpression, t) {
 
   const functionBlock = beforeEachExpression.get('arguments')[0];
   const functionBlockBody = functionBlock.get('body');
-  const functionBlockBodyStatementsArray = functionBlockBody ? functionBlockBody.get('body') : [];
+  const functionBlockBodyStatementsArray = functionBlockBody
+    ? functionBlockBody.get('body')
+    : [];
   let existingMetadataDeclaration;
 
   if (functionBlockBodyStatementsArray.length > 0) {
@@ -233,7 +235,7 @@ function addMetadata({ types: t }) {
           t.identifier(GET_TEST_METADATA)
         );
 
-        if (emberTestHelpersIndex > 0) {
+        if (emberTestHelpersIndex !== -1) {
           // Append to existing test-helpers import
           importDeclarations[emberTestHelpersIndex]
             .get('body')
