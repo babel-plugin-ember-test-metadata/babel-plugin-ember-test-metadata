@@ -158,9 +158,13 @@ function getTestMetadataAssignment(state, t) {
  * @returns Babel variable declaration
  */
 function getTestMetadataDeclaration(state, t) {
+  const getContextCallExpression = t.callExpression(
+    t.identifier(state.opts.getContextUID.name),
+    []
+  );
   const getTestMetadataExpression = t.callExpression(
     t.identifier(state.opts.getTestMetadataUID.name),
-    [t.thisExpression()]
+    [getContextCallExpression]
   );
 
   return t.variableDeclaration('let', [
@@ -196,7 +200,7 @@ function shouldLoadFile(filename) {
 /**
  * Babel plugin for Ember apps that adds the filepath of the test file that Babel is processing, to
  * the testMetadata. It does this by making the following transformations to the test file:
- * 1. imports "getTestMetadata" from @ember/test-helpers
+ * 1. imports "getTestMetadata" & "getContext" from @ember/test-helpers
  * 2. adds a new beforeEach or transforms any existing beforeEach to include testMetadata expressions that add
  *   filepath to testMetadata
  * @param {object} Babel object
@@ -208,6 +212,7 @@ function addMetadata({ types: t }) {
     visitor: {
       Program(babelPath, state) {
         const GET_TEST_METADATA = 'getTestMetadata';
+        const GET_CONTEXT = 'getContext';
         const { filename } = state.file.opts;
         state.opts.shouldLoadFile = shouldLoadFile(filename);
 
@@ -219,6 +224,10 @@ function addMetadata({ types: t }) {
         state.opts.setupCall;
         state.opts.moduleFunction;
         state.opts.hooksIdentifier;
+        state.opts.getTestMetadataUID =
+          babelPath.scope.generateUidIdentifier(GET_TEST_METADATA);
+        state.opts.getContextUID =
+          babelPath.scope.generateUidIdentifier(GET_CONTEXT);
 
         let importDeclarations = babelPath
           .get('body')
@@ -227,22 +236,26 @@ function addMetadata({ types: t }) {
           (n) => n.get('source').get('value').node === '@ember/test-helpers'
         );
 
-        state.opts.getTestMetadataUID =
-          babelPath.scope.generateUidIdentifier(GET_TEST_METADATA);
-
         const getTestMetaDataImportSpecifier = t.importSpecifier(
           state.opts.getTestMetadataUID,
           t.identifier(GET_TEST_METADATA)
+        );
+        const getContextImportSpecifier = t.importSpecifier(
+          state.opts.getContextUID,
+          t.identifier(GET_CONTEXT)
         );
 
         if (emberTestHelpersIndex !== -1) {
           // Append to existing test-helpers import
           importDeclarations[emberTestHelpersIndex]
             .get('body')
-            .container.specifiers.push(getTestMetaDataImportSpecifier);
+            .container.specifiers.push(
+              getTestMetaDataImportSpecifier,
+              getContextImportSpecifier
+            );
         } else {
           const getTestMetaDataImportDeclaration = t.importDeclaration(
-            [getTestMetaDataImportSpecifier],
+            [getTestMetaDataImportSpecifier, getContextImportSpecifier],
             t.stringLiteral('@ember/test-helpers')
           );
 
@@ -256,7 +269,7 @@ function addMetadata({ types: t }) {
        *
        * The transformed beforeEach would look like:
           hooks.beforeEach(function () {
-            let testMetadata = getTestMetadata(this);
+            let testMetadata = getTestMetadata(getContext());
             testMetadata.filePath = 'test/my-test.js';
           });
        * @param {object} babelPath

@@ -37,6 +37,7 @@ import {
   click,
   visit,
   getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
 } from '@ember/test-helpers';
 const SELECTORS = Object.freeze({
   MOCK_SELECTOR: '[data-test-nav-bar-browse]',
@@ -47,7 +48,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
     noop();
   });
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-one-beforeeach-import-exists-input-test.js';
@@ -77,7 +78,10 @@ test('should return proper things', function testGetDots(assert) {
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import { getTestMetadata as _getTestMetadata } from '@ember/test-helpers';
+import {
+  getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
+} from '@ember/test-helpers';
 import { module, test } from 'qunit';
 module('Unit | Utils | test one');
 test('should return proper things', function testGetDots(assert) {
@@ -118,7 +122,10 @@ module('Acceptance | browse acceptance test', function (hooks) {
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import { getTestMetadata as _getTestMetadata } from '@ember/test-helpers';
+import {
+  getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
+} from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 const SELECTORS = Object.freeze({
@@ -130,7 +137,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
     noop();
   });
   hooks.beforeEach(async function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-one-async-beforeeach-new-import-input-test.js';
@@ -169,7 +176,10 @@ module('Acceptance | browse acceptance test', function (hooks) {
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import { getTestMetadata as _getTestMetadata } from '@ember/test-helpers';
+import {
+  getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
+} from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 import { beforeEachSetup } from 'before-each-setup';
@@ -179,7 +189,7 @@ const SELECTORS = Object.freeze({
 module('Acceptance | browse acceptance test', function (hooks) {
   setupApplicationTest(hooks);
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-one-beforeeach-arg-not-inline-func-test.js';
@@ -221,6 +231,7 @@ import {
   click,
   visit,
   getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
 } from '@ember/test-helpers';
 const SELECTORS = Object.freeze({
   MOCK_SELECTOR: '[data-test-nav-bar-browse]',
@@ -228,7 +239,7 @@ const SELECTORS = Object.freeze({
 module('Acceptance | browse acceptance test', function (adsHooksV2) {
   setupApplicationTest(adsHooksV2);
   adsHooksV2.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-no-beforeeach-custom-hooks-name-test.js';
@@ -280,6 +291,7 @@ import { setupApplicationTest } from 'ember-qunit';
 import {
   visit,
   getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
 } from '@ember/test-helpers';
 const SELECTORS = Object.freeze({
   MOCK_SELECTOR: '[data-test-nav-bar-browse]',
@@ -289,7 +301,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
   setupTwo(hooks);
   setupThree(hooks);
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-no-beforeeach-multiple-setup-calls-test.js';
@@ -333,13 +345,14 @@ import { module, test } from 'qunit';
 import {
   visit,
   getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
 } from '@ember/test-helpers';
 const SELECTORS = Object.freeze({
   MOCK_SELECTOR: '[data-test-nav-bar-browse]',
 });
 module('Acceptance | browse acceptance test', function (hooks) {
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-no-beforeeach-no-hooks-no-setup-test.js';
@@ -369,14 +382,17 @@ module('Unit | foo', function () {
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import { getTestMetadata as _getTestMetadata } from '@ember/test-helpers';
+import {
+  getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
+} from '@ember/test-helpers';
 import { module, test } from 'qunit';
 module('Unit | foo', function (hooks) {
   some.otherThing(function () {
     noop();
   });
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-no-beforeeach-no-hooks-test.js';
@@ -419,7 +435,10 @@ module('Acceptance | browse acceptance test', function (hooks) {
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import { getTestMetadata as _getTestMetadata } from '@ember/test-helpers';
+import {
+  getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
+} from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 const SELECTORS = Object.freeze({
@@ -431,7 +450,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
     noop();
   });
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-one-beforeeach-new-import-input-test.js';
@@ -480,6 +499,7 @@ import {
   click,
   visit,
   getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
 } from '@ember/test-helpers';
 const SELECTORS = Object.freeze({
   MOCK_SELECTOR: '[data-test-nav-bar-browse]',
@@ -487,7 +507,7 @@ const SELECTORS = Object.freeze({
 module('Acceptance | browse acceptance test', function (hooks) {
   setupApplicationTest(hooks);
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-no-beforeeach-test-member-input-test.js';
@@ -535,6 +555,7 @@ import {
   click,
   visit,
   getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
 } from '@ember/test-helpers';
 const SELECTORS = Object.freeze({
   MOCK_SELECTOR: '[data-test-nav-bar-browse]',
@@ -542,7 +563,7 @@ const SELECTORS = Object.freeze({
 module('Acceptance | browse acceptance test', function (hooks) {
   setupApplicationTest(hooks);
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/one-module-no-beforeeach-import-exists-input-test.js';
@@ -608,7 +629,10 @@ module('Acceptance | search acceptance test', function (hooks) {
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import { getTestMetadata as _getTestMetadata } from '@ember/test-helpers';
+import {
+  getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
+} from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 const SELECTORS = Object.freeze({
@@ -620,7 +644,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
     noop();
   });
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/multiple-module-one-beforeeach-new-import-input-test.js';
@@ -638,7 +662,7 @@ module('Acceptance | search acceptance test', function (hooks) {
     noop();
   });
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/multiple-module-one-beforeeach-new-import-input-test.js';
@@ -696,6 +720,7 @@ import {
   click,
   visit,
   getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
 } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
@@ -705,7 +730,7 @@ const SELECTORS = Object.freeze({
 module('Acceptance | browse acceptance test', function (hooks) {
   setupApplicationTest(hooks);
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/multiple-module-no-beforeeach-import-exists-input-test.js';
@@ -721,7 +746,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
 module('Acceptance | search acceptance test', function (hooks) {
   setupApplicationTest(hooks);
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/multiple-module-no-beforeeach-import-exists-input-test.js';
@@ -785,6 +810,7 @@ import {
   click,
   visit,
   getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
 } from '@ember/test-helpers';
 const SELECTORS = Object.freeze({
   MOCK_SELECTOR: '[data-test-nav-bar-browse]',
@@ -795,7 +821,7 @@ module('Acceptance | browse acceptance test', function (hooks) {
     noop();
   });
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/nested-modules-with-beforeeach-import-exists-input-test.js';
@@ -858,6 +884,7 @@ import {
   click,
   visit,
   getTestMetadata as _getTestMetadata,
+  getContext as _getContext,
 } from '@ember/test-helpers';
 const SELECTORS = Object.freeze({
   MOCK_SELECTOR: '[data-test-nav-bar-browse]',
@@ -865,7 +892,7 @@ const SELECTORS = Object.freeze({
 module('Acceptance | browse acceptance test', function (hooks) {
   setupApplicationTest(hooks);
   hooks.beforeEach(function () {
-    let testMetadata = _getTestMetadata(this);
+    let testMetadata = _getTestMetadata(_getContext());
 
     testMetadata.filePath =
       '__tests__/__fixtures__/nested-modules-no-beforeeach-import-exists-input-test.js';
