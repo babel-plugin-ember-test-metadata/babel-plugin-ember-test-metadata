@@ -158,10 +158,9 @@ function getTestMetadataAssignment(state, t) {
  * @returns Babel variable declaration
  */
 function getTestMetadataDeclaration(state, t) {
-  const contextIdentifier = state.opts.contextIdentifier;
   const getTestMetadataExpression = t.callExpression(
     t.identifier(state.opts.getTestMetadataUID.name),
-    [contextIdentifier]
+    [t.identifier('QUnit.config.current.testEnvironment')]
   );
 
   return t.variableDeclaration('let', [
@@ -209,7 +208,6 @@ function addMetadata({ types: t }) {
     visitor: {
       Program(babelPath, state) {
         const GET_TEST_METADATA = 'getTestMetadata';
-        const CONTEXT = 'QUnit.config.current.testEnvironment';
         const { filename } = state.file.opts;
         state.opts.shouldLoadFile = shouldLoadFile(filename);
 
@@ -223,7 +221,6 @@ function addMetadata({ types: t }) {
         state.opts.hooksIdentifier;
         state.opts.getTestMetadataUID =
           babelPath.scope.generateUidIdentifier(GET_TEST_METADATA);
-        state.opts.contextIdentifier = t.identifier(CONTEXT);
 
         let importDeclarations = babelPath
           .get('body')
