@@ -158,10 +158,10 @@ function getTestMetadataAssignment(state, t) {
  * @returns Babel variable declaration
  */
 function getTestMetadataDeclaration(state, t) {
-  const getContextIdentifier = state.opts.getContextIdentifier;
+  const contextIdentifier = state.opts.contextIdentifier;
   const getTestMetadataExpression = t.callExpression(
     t.identifier(state.opts.getTestMetadataUID.name),
-    [getContextIdentifier]
+    [contextIdentifier]
   );
 
   return t.variableDeclaration('let', [
@@ -197,7 +197,7 @@ function shouldLoadFile(filename) {
 /**
  * Babel plugin for Ember apps that adds the filepath of the test file that Babel is processing, to
  * the testMetadata. It does this by making the following transformations to the test file:
- * 1. imports "getTestMetadata" & "getContext" from @ember/test-helpers
+ * 1. imports "getTestMetadata" from @ember/test-helpers
  * 2. adds a new beforeEach or transforms any existing beforeEach to include testMetadata expressions that add
  *   filepath to testMetadata
  * @param {object} Babel object
@@ -209,7 +209,7 @@ function addMetadata({ types: t }) {
     visitor: {
       Program(babelPath, state) {
         const GET_TEST_METADATA = 'getTestMetadata';
-        const GET_CONTEXT = 'QUnit.config.current.testEnvironment';
+        const CONTEXT = 'QUnit.config.current.testEnvironment';
         const { filename } = state.file.opts;
         state.opts.shouldLoadFile = shouldLoadFile(filename);
 
@@ -223,7 +223,7 @@ function addMetadata({ types: t }) {
         state.opts.hooksIdentifier;
         state.opts.getTestMetadataUID =
           babelPath.scope.generateUidIdentifier(GET_TEST_METADATA);
-        state.opts.getContextIdentifier = t.identifier(GET_CONTEXT);
+        state.opts.contextIdentifier = t.identifier(CONTEXT);
 
         let importDeclarations = babelPath
           .get('body')
@@ -258,7 +258,7 @@ function addMetadata({ types: t }) {
        *
        * The transformed beforeEach would look like:
           hooks.beforeEach(function () {
-            let testMetadata = getTestMetadata(getContext());
+            let testMetadata = getTestMetadata(<test context>);
             testMetadata.filePath = 'test/my-test.js';
           });
        * @param {object} babelPath
