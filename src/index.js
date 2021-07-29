@@ -158,13 +158,10 @@ function getTestMetadataAssignment(state, t) {
  * @returns Babel variable declaration
  */
 function getTestMetadataDeclaration(state, t) {
-  const getContextCallExpression = t.callExpression(
-    t.identifier(state.opts.getContextUID.name),
-    []
-  );
+  const getContextIdentifier = state.opts.getContextIdentifier;
   const getTestMetadataExpression = t.callExpression(
     t.identifier(state.opts.getTestMetadataUID.name),
-    [getContextCallExpression]
+    [getContextIdentifier]
   );
 
   return t.variableDeclaration('let', [
@@ -212,7 +209,7 @@ function addMetadata({ types: t }) {
     visitor: {
       Program(babelPath, state) {
         const GET_TEST_METADATA = 'getTestMetadata';
-        const GET_CONTEXT = 'getContext';
+        const GET_CONTEXT = 'QUnit.config.current.testEnvironment';
         const { filename } = state.file.opts;
         state.opts.shouldLoadFile = shouldLoadFile(filename);
 
@@ -226,8 +223,7 @@ function addMetadata({ types: t }) {
         state.opts.hooksIdentifier;
         state.opts.getTestMetadataUID =
           babelPath.scope.generateUidIdentifier(GET_TEST_METADATA);
-        state.opts.getContextUID =
-          babelPath.scope.generateUidIdentifier(GET_CONTEXT);
+        state.opts.getContextIdentifier = t.identifier(GET_CONTEXT);
 
         let importDeclarations = babelPath
           .get('body')
@@ -240,22 +236,15 @@ function addMetadata({ types: t }) {
           state.opts.getTestMetadataUID,
           t.identifier(GET_TEST_METADATA)
         );
-        const getContextImportSpecifier = t.importSpecifier(
-          state.opts.getContextUID,
-          t.identifier(GET_CONTEXT)
-        );
 
         if (emberTestHelpersIndex !== -1) {
           // Append to existing test-helpers import
           importDeclarations[emberTestHelpersIndex]
             .get('body')
-            .container.specifiers.push(
-              getTestMetaDataImportSpecifier,
-              getContextImportSpecifier
-            );
+            .container.specifiers.push(getTestMetaDataImportSpecifier);
         } else {
           const getTestMetaDataImportDeclaration = t.importDeclaration(
-            [getTestMetaDataImportSpecifier, getContextImportSpecifier],
+            [getTestMetaDataImportSpecifier],
             t.stringLiteral('@ember/test-helpers')
           );
 
