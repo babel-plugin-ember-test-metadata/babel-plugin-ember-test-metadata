@@ -290,9 +290,6 @@ function addMetadata({ types: t }) {
             );
             state.opts.moduleName = moduleName.node.value;
             state.opts.moduleFunction = moduleFunction;
-          } else {
-            // skip traversing contents in this nested module
-            babelPath.skip();
           }
         }
 
