@@ -207,6 +207,10 @@ function addMetadata({ types: t }) {
     name: 'addMetadata',
     visitor: {
       Program(babelPath, state) {
+        if (!state.opts.enabled) {
+          return;
+        }
+
         const GET_TEST_METADATA = 'getTestMetadata';
         const { filename } = state.file.opts;
         state.opts.shouldLoadFile = shouldLoadFile(filename);

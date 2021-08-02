@@ -6,6 +6,9 @@ pluginTester({
   plugin: addMetadata,
   pluginName: 'addMetadata',
   snapshot: true,
+  pluginOptions: {
+    enabled: true,
+  },
   tests: [
     {
       title:
