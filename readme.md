@@ -35,13 +35,8 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 module.exports = function (defaults) {
   let app = new EmberApp(defaults, {
     babel: {
-      plugins: [
-        [
-          require.resolve('babel-plugin-ember-test-metadata'),
-          { enabled: process.env.BABEL_TEST_METADATA }
-        ]
-      ],
-    },
+      plugins: [ require.resolve('babel-plugin-ember-test-metadata') ]
+    }
   });
 
   // additional configuration
@@ -49,3 +44,5 @@ module.exports = function (defaults) {
   return app.toTree();
 };
 ```
+
+Set the environment variable `BABEL_TEST_METADATA=true` to enable the plugin to perform its transformations.

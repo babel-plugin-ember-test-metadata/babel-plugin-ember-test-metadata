@@ -203,14 +203,16 @@ function shouldLoadFile(filename) {
  * @returns Babel plugin object with Program and CallExpression visitors
  */
 function addMetadata({ types: t }) {
+  console.log('env var', process.env.BABEL_TEST_METADATA);
+
+  if (!process.env.BABEL_TEST_METADATA) {
+    return {};
+  }
+
   return {
     name: 'addMetadata',
     visitor: {
       Program(babelPath, state) {
-        if (!state.opts.enabled) {
-          return;
-        }
-
         const GET_TEST_METADATA = 'getTestMetadata';
         const { filename } = state.file.opts;
         state.opts.shouldLoadFile = shouldLoadFile(filename);
