@@ -38,7 +38,7 @@ module.exports = function (defaults) {
       plugins: [
         [
           require.resolve('babel-plugin-ember-test-metadata'),
-          { enabled: process.env.BABEL_TEST_METADATA }
+          { enabled: !!process.env.BABEL_TEST_METADATA }
         ]
       ],
     }

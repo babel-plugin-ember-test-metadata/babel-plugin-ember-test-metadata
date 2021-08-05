@@ -20,10 +20,6 @@ function shouldLoadFile(filename) {
  * @returns Babel plugin object with Program and CallExpression visitors
  */
 function addMetadata({ types: t }) {
-  if (!process.env.BABEL_TEST_METADATA) {
-    return {};
-  }
-
   return {
     name: 'addMetadata',
     visitor: {
