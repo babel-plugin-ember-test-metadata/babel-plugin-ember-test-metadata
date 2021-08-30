@@ -1,5 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`addMetadata Embroider build path: Embroider build path 1`] = `
+
+import { module, test } from 'qunit';
+import { click, getTestMetadata } from '@ember/test-helpers';
+
+module('Acceptance | example test embroider prefix', function (hooks) {
+  hooks.beforeEach(function () {
+    // noop
+  });
+
+  test('example', async function (assert) {
+    click();
+    assert(true);
+  });
+});
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { module, test } from 'qunit';
+import { click, getTestMetadata } from '@ember/test-helpers';
+module('Acceptance | example test embroider prefix', function (hooks) {
+  hooks.beforeEach(function () {
+    let testMetadata = getTestMetadata(QUnit.config.current.testEnvironment);
+    testMetadata.filePath = 'pathtest/embroider-prefix-test.js';
+  });
+  hooks.beforeEach(function () {
+    // noop
+  });
+  test('example', async function (assert) {
+    click();
+    assert(true);
+  });
+});
+
+
+`;
+
 exports[`addMetadata for a module with hooks it adds getTestMetadata: for a module with hooks it adds getTestMetadata 1`] = `
 
 import {module, test} from 'qunit';
