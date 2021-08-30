@@ -31,17 +31,14 @@ function getNodeProperty(node, path) {
 }
 
 function hasEmbroiderPrefix(filepath) {
+  if (typeof filepath !== 'string') return;
+
   const separator = filepath.includes('\\') ? '\\' : '/';
-  return (
-    typeof filepath === 'string' &&
-    filepath.split(separator).includes('embroider')
-  );
+  return filepath.split(separator).includes('embroider');
 }
 
-function stripEmbroiderPrefix(filepath) {
-  if (!hasEmbroiderPrefix(filepath)) {
-    return;
-  }
+function getEmbroiderStrippedPrefixPath(filepath) {
+  if (!hasEmbroiderPrefix(filepath)) return;
 
   const separator = filepath.includes('\\') ? '\\' : '/';
   const tokens = filepath.split(separator);
@@ -50,4 +47,8 @@ function stripEmbroiderPrefix(filepath) {
   return tokens.join(separator);
 }
 
-module.exports = { getNodeProperty, stripEmbroiderPrefix, hasEmbroiderPrefix };
+module.exports = {
+  getNodeProperty,
+  getEmbroiderStrippedPrefixPath,
+  hasEmbroiderPrefix,
+};
