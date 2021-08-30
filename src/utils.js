@@ -30,4 +30,21 @@ function getNodeProperty(node, path) {
   return property;
 }
 
-module.exports = getNodeProperty;
+function stripEmbroiderPrefix(filepath) {
+  if (typeof filepath !== 'string') {
+    return;
+  }
+
+  let separator = '/';
+  const windowsSeparator = '\\';
+
+  if (filepath.includes(windowsSeparator)) {
+    separator = windowsSeparator;
+  }
+
+  const tokens = filepath.split(separator);
+  tokens.splice(0, tokens.indexOf('embroider') + 2);
+  return tokens.join(separator);
+}
+
+module.exports = { getNodeProperty, stripEmbroiderPrefix };

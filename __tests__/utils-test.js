@@ -1,4 +1,4 @@
-const getNodeProperty = require('../src/utils');
+const { getNodeProperty, stripEmbroiderPrefix } = require('../src/utils');
 
 describe('Unit | utils | getNodeProperty', () => {
   it('returns property as expected', () => {
@@ -22,5 +22,16 @@ describe('Unit | utils | getNodeProperty', () => {
     expect(getNodeProperty(emptyNode, 'volume.level')).toBe(undefined);
     expect(getNodeProperty(null, 'volume.level')).toBe(undefined);
     expect(getNodeProperty({}, 'volume.level')).toBe(undefined);
+  });
+});
+
+describe('Unit | utils | stripEmbroiderPrefix', () => {
+  const mockEmbroiderBuildPath =
+    '/private/var/folders/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js';
+
+  it('returns stripped file path as expected', () => {
+    expect(stripEmbroiderPrefix(mockEmbroiderBuildPath)).toBe(
+      'tests/acceptance/my-test.js'
+    );
   });
 });
