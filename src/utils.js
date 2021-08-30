@@ -53,7 +53,7 @@ function getEmbroiderStrippedPrefixPath(filepath) {
   const separator = filepath.includes('\\') ? '\\' : '/';
   const tokens = filepath.split(separator);
 
-  tokens.splice(0, tokens.indexOf('embroider') + 2);
+  tokens.splice(0, tokens.lastIndexOf('embroider') + 2);
   return tokens.join(separator);
 }
 

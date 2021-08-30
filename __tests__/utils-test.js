@@ -32,6 +32,8 @@ describe('Unit | utils | getNodeProperty', () => {
 describe('Unit | utils | getEmbroiderStrippedPrefixPath', () => {
   const mockEmbroiderBuildPath =
     '/private/var/folders/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js';
+  const mockEmbroiderBuildPathTwoEmbroiderTokens =
+    '/private/var/folders/embroider/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js';
   const mockWindowsEmbroiderBuildPath =
     'C:\\private\\var\\folders\\abcdefg1234\\T\\embroider\\098765\\tests\\acceptance\\my-test.js';
 
@@ -39,6 +41,9 @@ describe('Unit | utils | getEmbroiderStrippedPrefixPath', () => {
     expect(getEmbroiderStrippedPrefixPath(mockEmbroiderBuildPath)).toBe(
       'tests/acceptance/my-test.js'
     );
+    expect(
+      getEmbroiderStrippedPrefixPath(mockEmbroiderBuildPathTwoEmbroiderTokens)
+    ).toBe('tests/acceptance/my-test.js');
     expect(getEmbroiderStrippedPrefixPath(mockWindowsEmbroiderBuildPath)).toBe(
       'tests\\acceptance\\my-test.js'
     );
