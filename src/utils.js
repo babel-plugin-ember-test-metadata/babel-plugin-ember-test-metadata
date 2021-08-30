@@ -30,6 +30,11 @@ function getNodeProperty(node, path) {
   return property;
 }
 
+/**
+ * Check if the file path follows an Embroider build pattern
+ * @param {string} filepath
+ * @returns boolean
+ */
 function hasEmbroiderPrefix(filepath) {
   if (typeof filepath !== 'string') return;
 
@@ -37,8 +42,13 @@ function hasEmbroiderPrefix(filepath) {
   return filepath.split(separator).includes('embroider');
 }
 
+/**
+ * Get a file path with the Embroider prefix segments stripped out
+ * @param {string} filepath  E.g. /private/var/folders/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js
+ * @returns {string} E.g. tests/acceptance/my-test.js
+ */
 function getEmbroiderStrippedPrefixPath(filepath) {
-  if (!hasEmbroiderPrefix(filepath)) return;
+  if (typeof filepath !== 'string') return;
 
   const separator = filepath.includes('\\') ? '\\' : '/';
   const tokens = filepath.split(separator);

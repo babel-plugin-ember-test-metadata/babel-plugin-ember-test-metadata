@@ -1,5 +1,5 @@
 const path = require('path');
-const getNodeProperty = require('./utils.js');
+const { getNodeProperty } = require('./utils.js');
 
 /**
  * Checks for files ending with "-test.js" or "_test.js"
