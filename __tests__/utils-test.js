@@ -1,4 +1,8 @@
-const { getNodeProperty, stripEmbroiderPrefix } = require('../src/utils');
+const {
+  getNodeProperty,
+  stripEmbroiderPrefix,
+  hasEmbroiderPrefix,
+} = require('../src/utils');
 
 describe('Unit | utils | getNodeProperty', () => {
   it('returns property as expected', () => {
@@ -33,5 +37,18 @@ describe('Unit | utils | stripEmbroiderPrefix', () => {
     expect(stripEmbroiderPrefix(mockEmbroiderBuildPath)).toBe(
       'tests/acceptance/my-test.js'
     );
+  });
+});
+
+describe('Unit | utils | hasEmbroiderPrefix', () => {
+  const mockEmbroiderBuildPath =
+    '/private/var/folders/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js';
+
+  it('returns true if file path includes embroider', () => {
+    expect(hasEmbroiderPrefix(mockEmbroiderBuildPath)).toBe(true);
+  });
+
+  it('returns false if file path does not include embroider', () => {
+    expect(hasEmbroiderPrefix('this/is/not-an-embroider/path')).toBe(false);
   });
 });

@@ -30,21 +30,24 @@ function getNodeProperty(node, path) {
   return property;
 }
 
+function hasEmbroiderPrefix(filepath) {
+  const separator = filepath.includes('\\') ? '\\' : '/';
+  return (
+    typeof filepath === 'string' &&
+    filepath.split(separator).includes('embroider')
+  );
+}
+
 function stripEmbroiderPrefix(filepath) {
-  if (typeof filepath !== 'string') {
+  if (!hasEmbroiderPrefix(filepath)) {
     return;
   }
 
-  let separator = '/';
-  const windowsSeparator = '\\';
-
-  if (filepath.includes(windowsSeparator)) {
-    separator = windowsSeparator;
-  }
-
+  const separator = filepath.includes('\\') ? '\\' : '/';
   const tokens = filepath.split(separator);
+
   tokens.splice(0, tokens.indexOf('embroider') + 2);
   return tokens.join(separator);
 }
 
-module.exports = { getNodeProperty, stripEmbroiderPrefix };
+module.exports = { getNodeProperty, stripEmbroiderPrefix, hasEmbroiderPrefix };
