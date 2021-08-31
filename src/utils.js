@@ -33,26 +33,25 @@ function getNodeProperty(node, path) {
 }
 
 /**
- * Get a file path with the Embroider prefix segments stripped out
- * @param {string} filepath  E.g. /private/var/folders/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js
+ * Get a normalized file path. If Embroider prefix is present, strip it out
+ * @param {object} fileOpts Babel state.file.opts which include root and filename props
  * @returns {string} E.g. tests/acceptance/my-test.js
  */
-function getEmbroiderStrippedPrefixPath(filepath) {
-  if (
-    typeof filepath !== 'string' ||
-    !filepath.split(path.sep).includes('embroider')
-  ) {
-    return;
+function getNormalizedFilePath(fileOpts) {
+  let { root, filename } = fileOpts;
+  const tokens = filename.split(path.sep);
+
+  if (tokens.includes('embroider')) {
+    const RELATIVE_PATH_ROOT = 2;
+
+    tokens.splice(0, tokens.lastIndexOf('embroider') + RELATIVE_PATH_ROOT);
+    filename = tokens.join(path.sep);
   }
 
-  const RELATIVE_PATH_ROOT = 2;
-  const tokens = filepath.split(path.sep);
-
-  tokens.splice(0, tokens.lastIndexOf('embroider') + RELATIVE_PATH_ROOT);
-  return tokens.join(path.sep);
+  return path.relative(root, filename);
 }
 
 module.exports = {
   getNodeProperty,
-  getEmbroiderStrippedPrefixPath,
+  getNormalizedFilePath,
 };

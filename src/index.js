@@ -1,9 +1,4 @@
-const path = require('path');
-const {
-  getNodeProperty,
-  getEmbroiderStrippedPrefixPath,
-  hasEmbroiderPrefix,
-} = require('./utils.js');
+const { getNodeProperty, getNormalizedFilePath } = require('./utils.js');
 
 /**
  * Checks for files ending with "-test.js" or "_test.js"
@@ -116,13 +111,7 @@ function addMetadata({ types: t }) {
           ),
         ]);
 
-        let { root, filename } = state.file.opts;
-
-        if (hasEmbroiderPrefix(filename)) {
-          filename = getEmbroiderStrippedPrefixPath(filename);
-        }
-
-        const relativeFilePath = path.relative(root, filename);
+        const relativeFilePath = getNormalizedFilePath(state.file.opts);
 
         const testMetadataAssignment = t.expressionStatement(
           t.assignmentExpression(

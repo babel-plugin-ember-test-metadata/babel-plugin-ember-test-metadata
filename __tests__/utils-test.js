@@ -1,8 +1,5 @@
 const path = require('path');
-const {
-  getNodeProperty,
-  getEmbroiderStrippedPrefixPath,
-} = require('../src/utils');
+const { getNodeProperty, getNormalizedFilePath } = require('../src/utils');
 
 describe('Unit | utils | getNodeProperty', () => {
   it('returns property as expected', () => {
@@ -29,33 +26,35 @@ describe('Unit | utils | getNodeProperty', () => {
   });
 });
 
-describe('Unit | utils | getEmbroiderStrippedPrefixPath', () => {
+describe('Unit | utils | getNormalizedFilePath', () => {
   const embroiderBuildPath =
     '/private/var/folders/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js';
   const embroiderBuildPathTwoEmbroiderTokens =
     '/private/var/folders/embroider/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js';
 
   it('returns stripped file path as expected', () => {
-    expect(getEmbroiderStrippedPrefixPath(embroiderBuildPath)).toBe(
-      'tests/acceptance/my-test.js'
-    );
     expect(
-      getEmbroiderStrippedPrefixPath(embroiderBuildPathTwoEmbroiderTokens)
+      getNormalizedFilePath({ root: '', filename: embroiderBuildPath })
+    ).toBe('tests/acceptance/my-test.js');
+    expect(
+      getNormalizedFilePath({
+        root: '',
+        filename: embroiderBuildPathTwoEmbroiderTokens,
+      })
     ).toBe('tests/acceptance/my-test.js');
   });
 
-  it('returns undefined if file path does not include "embroider" as a segment', () => {
+  it('returns unmodified file path when path does not include "embroider" as a segment', () => {
     expect(
-      getEmbroiderStrippedPrefixPath('this/is/not-an-embroider/path')
-    ).toBe(undefined);
-  });
-
-  it('returns undefined if file path is not a string', () => {
-    expect(getEmbroiderStrippedPrefixPath({})).toBe(undefined);
+      getNormalizedFilePath({
+        root: '',
+        filename: 'this/is/not-an-embroider/path',
+      })
+    ).toBe('this/is/not-an-embroider/path');
   });
 });
 
-describe('Unit | utils | getEmbroiderStrippedPrefixPath with Windows path', () => {
+describe('Unit | utils | getNormalizedFilePath with Windows path', () => {
   const originalPathSeperator = path.sep;
   const windowsEmbroiderBuildPath =
     'C:\\private\\var\\folders\\abcdefg1234\\T\\embroider\\098765\\tests\\acceptance\\my-test.js';
@@ -69,8 +68,8 @@ describe('Unit | utils | getEmbroiderStrippedPrefixPath with Windows path', () =
   });
 
   it('returns stripped file path as expected', () => {
-    expect(getEmbroiderStrippedPrefixPath(windowsEmbroiderBuildPath)).toBe(
-      'tests\\acceptance\\my-test.js'
-    );
+    expect(
+      getNormalizedFilePath({ root: '', filename: windowsEmbroiderBuildPath })
+    ).toBe('tests\\acceptance\\my-test.js');
   });
 });
