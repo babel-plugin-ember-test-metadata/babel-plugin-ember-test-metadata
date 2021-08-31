@@ -40,11 +40,12 @@ function getNodeProperty(node, path) {
 function getNormalizedFilePath(fileOpts) {
   let { root, filename } = fileOpts;
   const tokens = filename.split(path.sep);
+  const EMBROIDER = 'embroider';
 
-  if (tokens.includes('embroider')) {
+  if (tokens.includes(EMBROIDER)) {
     const RELATIVE_PATH_ROOT = 2;
 
-    tokens.splice(0, tokens.lastIndexOf('embroider') + RELATIVE_PATH_ROOT);
+    tokens.splice(0, tokens.lastIndexOf(EMBROIDER) + RELATIVE_PATH_ROOT);
     filename = tokens.join(path.sep);
   }
 
