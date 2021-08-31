@@ -1,3 +1,4 @@
+const path = require('path');
 const {
   getNodeProperty,
   getEmbroiderStrippedPrefixPath,
@@ -30,23 +31,18 @@ describe('Unit | utils | getNodeProperty', () => {
 });
 
 describe('Unit | utils | getEmbroiderStrippedPrefixPath', () => {
-  const mockEmbroiderBuildPath =
+  const embroiderBuildPath =
     '/private/var/folders/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js';
-  const mockEmbroiderBuildPathTwoEmbroiderTokens =
+  const embroiderBuildPathTwoEmbroiderTokens =
     '/private/var/folders/embroider/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js';
-  const mockWindowsEmbroiderBuildPath =
-    'C:\\private\\var\\folders\\abcdefg1234\\T\\embroider\\098765\\tests\\acceptance\\my-test.js';
 
   it('returns stripped file path as expected', () => {
-    expect(getEmbroiderStrippedPrefixPath(mockEmbroiderBuildPath)).toBe(
+    expect(getEmbroiderStrippedPrefixPath(embroiderBuildPath)).toBe(
       'tests/acceptance/my-test.js'
     );
     expect(
-      getEmbroiderStrippedPrefixPath(mockEmbroiderBuildPathTwoEmbroiderTokens)
+      getEmbroiderStrippedPrefixPath(embroiderBuildPathTwoEmbroiderTokens)
     ).toBe('tests/acceptance/my-test.js');
-    expect(getEmbroiderStrippedPrefixPath(mockWindowsEmbroiderBuildPath)).toBe(
-      'tests\\acceptance\\my-test.js'
-    );
   });
 
   it('returns undefined if file path is not a string', () => {
@@ -54,12 +50,32 @@ describe('Unit | utils | getEmbroiderStrippedPrefixPath', () => {
   });
 });
 
+describe('Unit | utils | getEmbroiderStrippedPrefixPath in Windows', () => {
+  const originalPathSeperator = path.sep;
+  const windowsEmbroiderBuildPath =
+    'C:\\private\\var\\folders\\abcdefg1234\\T\\embroider\\098765\\tests\\acceptance\\my-test.js';
+
+  beforeEach(() => {
+    path.sep = '\\';
+  });
+
+  afterEach(() => {
+    path.sep = originalPathSeperator;
+  });
+
+  it('returns stripped file path as expected', () => {
+    expect(getEmbroiderStrippedPrefixPath(windowsEmbroiderBuildPath)).toBe(
+      'tests\\acceptance\\my-test.js'
+    );
+  });
+});
+
 describe('Unit | utils | hasEmbroiderPrefix', () => {
-  const mockEmbroiderBuildPath =
+  const embroiderBuildPath =
     '/private/var/folders/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js';
 
   it('returns true if file path includes "embroider"', () => {
-    expect(hasEmbroiderPrefix(mockEmbroiderBuildPath)).toBe(true);
+    expect(hasEmbroiderPrefix(embroiderBuildPath)).toBe(true);
   });
 
   it('returns false if file path does not include "embroider"', () => {

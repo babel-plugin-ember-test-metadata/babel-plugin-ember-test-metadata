@@ -1,3 +1,5 @@
+const path = require('path');
+
 /**
  * Utility to get a property from a given path
  * @param {object} node
@@ -50,11 +52,11 @@ function hasEmbroiderPrefix(filepath) {
 function getEmbroiderStrippedPrefixPath(filepath) {
   if (typeof filepath !== 'string') return;
 
-  const separator = filepath.includes('\\') ? '\\' : '/';
-  const tokens = filepath.split(separator);
+  const RELATIVE_PATH_ROOT = 2;
+  const tokens = filepath.split(path.sep);
 
-  tokens.splice(0, tokens.lastIndexOf('embroider') + 2);
-  return tokens.join(separator);
+  tokens.splice(0, tokens.lastIndexOf('embroider') + RELATIVE_PATH_ROOT);
+  return tokens.join(path.sep);
 }
 
 module.exports = {
