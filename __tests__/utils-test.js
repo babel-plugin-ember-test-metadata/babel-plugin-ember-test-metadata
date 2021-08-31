@@ -2,7 +2,6 @@ const path = require('path');
 const {
   getNodeProperty,
   getEmbroiderStrippedPrefixPath,
-  hasEmbroiderPrefix,
 } = require('../src/utils');
 
 describe('Unit | utils | getNodeProperty', () => {
@@ -45,12 +44,18 @@ describe('Unit | utils | getEmbroiderStrippedPrefixPath', () => {
     ).toBe('tests/acceptance/my-test.js');
   });
 
+  it('returns undefined if file path does not include "embroider" as a segment', () => {
+    expect(
+      getEmbroiderStrippedPrefixPath('this/is/not-an-embroider/path')
+    ).toBe(undefined);
+  });
+
   it('returns undefined if file path is not a string', () => {
     expect(getEmbroiderStrippedPrefixPath({})).toBe(undefined);
   });
 });
 
-describe('Unit | utils | getEmbroiderStrippedPrefixPath in Windows', () => {
+describe('Unit | utils | getEmbroiderStrippedPrefixPath with Windows path', () => {
   const originalPathSeperator = path.sep;
   const windowsEmbroiderBuildPath =
     'C:\\private\\var\\folders\\abcdefg1234\\T\\embroider\\098765\\tests\\acceptance\\my-test.js';
@@ -67,22 +72,5 @@ describe('Unit | utils | getEmbroiderStrippedPrefixPath in Windows', () => {
     expect(getEmbroiderStrippedPrefixPath(windowsEmbroiderBuildPath)).toBe(
       'tests\\acceptance\\my-test.js'
     );
-  });
-});
-
-describe('Unit | utils | hasEmbroiderPrefix', () => {
-  const embroiderBuildPath =
-    '/private/var/folders/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js';
-
-  it('returns true if file path includes "embroider"', () => {
-    expect(hasEmbroiderPrefix(embroiderBuildPath)).toBe(true);
-  });
-
-  it('returns false if file path does not include "embroider"', () => {
-    expect(hasEmbroiderPrefix('this/is/not-an-embroider/path')).toBe(false);
-  });
-
-  it('returns undefined if file path is not a string', () => {
-    expect(hasEmbroiderPrefix({})).toBe(undefined);
   });
 });
