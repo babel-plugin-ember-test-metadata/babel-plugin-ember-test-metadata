@@ -1,4 +1,4 @@
-const os = require('os');
+const path = require('path');
 const { getNodeProperty, getNormalizedFilePath } = require('../src/utils');
 
 describe('Unit | utils | getNodeProperty', () => {
@@ -27,62 +27,56 @@ describe('Unit | utils | getNodeProperty', () => {
 });
 
 describe('Unit | utils | getNormalizedFilePath', () => {
-  const OS = os.platform() === 'win32' ? 'windows' : 'nixBased';
   const fileOpts = {
-    nixBased: {
-      embroiderBuildPath: {
-        root: '',
-        filename:
-          '/private/var/folders/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js',
-      },
-      embroiderBuildPathTwoEmbroiderTokens: {
-        root: '',
-        filename:
-          '/private/var/folders/embroider/abcdefg1234/T/embroider/098765/tests/acceptance/my-test.js',
-      },
-      normalFilePath: {
-        root: '',
-        filename: 'this/is/not-an-embroider/path',
-      },
+    embroiderBuildPath: {
+      root: '',
+      filename: path.join(
+        'private',
+        'var',
+        'folders',
+        'abcdefg1234',
+        'T',
+        'embroider',
+        '098765',
+        'tests',
+        'acceptance',
+        'my-test.js'
+      ),
     },
-    windows: {
-      embroiderBuildPath: {
-        root: '',
-        filename:
-          'C:\\private\\var\\folders\\abcdefg1234\\T\\embroider\\098765\\tests\\acceptance\\my-test.js',
-      },
-      embroiderBuildPathTwoEmbroiderTokens: {
-        root: '',
-        filename:
-          'C:\\private\\var\\folders\\embroider\\abcdefg1234\\T\\embroider\\098765\\tests\\acceptance\\my-test.js',
-      },
-      normalFilePath: {
-        root: '',
-        filename: 'this\\is\\not-an-embroider\\path',
-      },
+    embroiderBuildPathTwoEmbroiderTokens: {
+      root: '',
+      filename: path.join(
+        'private',
+        'var',
+        'folders',
+        'embroider',
+        'abcdefg1234',
+        'T',
+        'embroider',
+        '098765',
+        'tests',
+        'acceptance',
+        'my-test.js'
+      ),
+    },
+    normalFilePath: {
+      root: '',
+      filename: path.join('this', 'is', 'not-an-embroider', 'path'),
     },
   };
 
   it('returns stripped file path as expected', () => {
-    expect(getNormalizedFilePath(fileOpts[OS].embroiderBuildPath)).toBe(
-      OS === 'nixBased'
-        ? 'tests/acceptance/my-test.js'
-        : 'tests\\acceptance\\my-test.js'
+    expect(getNormalizedFilePath(fileOpts.embroiderBuildPath)).toBe(
+      path.join('tests', 'acceptance', 'my-test.js')
     );
     expect(
-      getNormalizedFilePath(fileOpts[OS].embroiderBuildPathTwoEmbroiderTokens)
-    ).toBe(
-      OS === 'nixBased'
-        ? 'tests/acceptance/my-test.js'
-        : 'tests\\acceptance\\my-test.js'
-    );
+      getNormalizedFilePath(fileOpts.embroiderBuildPathTwoEmbroiderTokens)
+    ).toBe(path.join('tests', 'acceptance', 'my-test.js'));
   });
 
   it('returns unmodified file path when path does not include "embroider" as a segment', () => {
-    expect(getNormalizedFilePath(fileOpts[OS].normalFilePath)).toBe(
-      OS === 'nixBased'
-        ? 'this/is/not-an-embroider/path'
-        : 'this\\is\\not-an-embroider\\path'
+    expect(getNormalizedFilePath(fileOpts.normalFilePath)).toBe(
+      path.join('this', 'is', 'not-an-embroider', 'path')
     );
   });
 });

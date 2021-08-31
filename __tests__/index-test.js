@@ -10,17 +10,17 @@ pluginTester({
   tests: [
     {
       title: 'for a module with hooks it adds getTestMetadata',
-      fixture: path.join(__dirname, '__fixtures__/', 'with-hooks-test.js'),
+      fixture: path.join(__dirname, '__fixtures__', 'with-hooks-test.js'),
     },
     {
       title: 'for a module with no hooks it adds test metadata',
-      fixture: path.join(__dirname, '__fixtures__/', 'without-hooks-test.js'),
+      fixture: path.join(__dirname, '__fixtures__', 'without-hooks-test.js'),
     },
     {
       title: 'with existing metadata import it reuses the import',
       fixture: path.join(
         __dirname,
-        '__fixtures__/',
+        '__fixtures__',
         'with-get-test-metadata-test.js'
       ),
     },
@@ -28,7 +28,7 @@ pluginTester({
       title: 'with multiple sibling modules',
       fixture: path.join(
         __dirname,
-        '__fixtures__/',
+        '__fixtures__',
         'with-multiple-modules-test.js'
       ),
     },
@@ -36,7 +36,7 @@ pluginTester({
       title: 'with no module callback it does not add a beforeEach',
       fixture: path.join(
         __dirname,
-        '__fixtures__/',
+        '__fixtures__',
         'with-no-module-callback-test.js'
       ),
     },
@@ -44,7 +44,7 @@ pluginTester({
       title: 'Embroider build path',
       fixture: path.join(
         __dirname,
-        '__fixtures__/',
+        '__fixtures__',
         'temp-test-123',
         'embroider',
         '123456',

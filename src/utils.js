@@ -46,8 +46,8 @@ function getNormalizedFilePath(fileOpts) {
     const RELATIVE_PATH_ROOT = 2;
 
     tokens.splice(0, tokens.lastIndexOf(EMBROIDER) + RELATIVE_PATH_ROOT);
-    filename = tokens.join(path.sep);
   }
+  filename = tokens.join(path.sep);
 
   return path.relative(root, filename);
 }
