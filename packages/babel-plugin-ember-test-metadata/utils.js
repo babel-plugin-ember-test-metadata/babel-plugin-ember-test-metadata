@@ -32,21 +32,44 @@ function getNodeProperty(node, path) {
   return property;
 }
 
+function getProjectInfo(project) {
+  const parsedProjectInfo = {};
+
+  if (project) {
+    parsedProjectInfo.pkg = {
+      name: project.pkg.name,
+      'ember-addon': {
+        paths: project.pkg['ember-addon'].paths,
+      },
+    };
+  }
+
+  return parsedProjectInfo;
+}
+
 /**
  * Get a normalized file path. If Embroider prefix is present, strip it out
  * @param {object} fileOpts Babel state.file.opts which include root and filename props
  * @returns {string} E.g. tests/acceptance/my-test.js
  */
-function getNormalizedFilePath(fileOpts) {
+function getNormalizedFilePath(fileOpts, projectInfo) {
   let { root, filename } = fileOpts;
   const tokens = filename.split(path.sep);
   const EMBROIDER = 'embroider';
+  const isClassic = projectInfo.pkg['ember-addon'].paths === undefined;
+
+  if (isClassic) {
+    const projectNameTokens = projectInfo.pkg.name.split(path.sep);
+
+    tokens.splice(0, tokens.indexOf(projectNameTokens[0]) + projectNameTokens.length);
+  }
 
   if (tokens.includes(EMBROIDER)) {
     const RELATIVE_PATH_ROOT = 2;
 
     tokens.splice(0, tokens.lastIndexOf(EMBROIDER) + RELATIVE_PATH_ROOT);
   }
+
   filename = tokens.join(path.sep);
 
   return path.relative(root, filename);
@@ -55,4 +78,5 @@ function getNormalizedFilePath(fileOpts) {
 module.exports = {
   getNodeProperty,
   getNormalizedFilePath,
+  getProjectInfo,
 };
