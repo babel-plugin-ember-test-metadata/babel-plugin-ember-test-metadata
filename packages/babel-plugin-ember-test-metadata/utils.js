@@ -99,4 +99,6 @@ module.exports = {
   getNodeProperty,
   getNormalizedFilePath,
   getProjectInfo,
+  getParsedClassicFilepath,
+  getParsedEmbroiderFilepath,
 };
