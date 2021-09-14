@@ -38,8 +38,10 @@ function addMetadata({ types: t }) {
               .get('specifiers')
               .some(
                 (s) =>
-                  getNodeProperty(s.get('container'), 'container.imported.name') ===
-                  'getTestMetadata'
+                  getNodeProperty(
+                    s.get('container'),
+                    'container.imported.name'
+                  ) === 'getTestMetadata'
               );
           });
 
@@ -52,7 +54,10 @@ function addMetadata({ types: t }) {
 
         babelPath.unshiftContainer(
           'body',
-          t.importDeclaration([importSpecifier], t.stringLiteral('@ember/test-helpers'))
+          t.importDeclaration(
+            [importSpecifier],
+            t.stringLiteral('@ember/test-helpers')
+          )
         );
       },
 
@@ -87,7 +92,10 @@ function addMetadata({ types: t }) {
           return;
         }
 
-        let hooksIdentifier = getNodeProperty(moduleFunction.get('params')[0], 'node.name');
+        let hooksIdentifier = getNodeProperty(
+          moduleFunction.get('params')[0],
+          'node.name'
+        );
 
         if (!hooksIdentifier) {
           hooksIdentifier = 'hooks';
@@ -108,7 +116,10 @@ function addMetadata({ types: t }) {
         const testMetadataAssignment = t.expressionStatement(
           t.assignmentExpression(
             '=',
-            t.memberExpression(t.identifier('testMetadata'), t.identifier('filePath')),
+            t.memberExpression(
+              t.identifier('testMetadata'),
+              t.identifier('filePath')
+            ),
             t.stringLiteral(relativeFilePath)
           )
         );
@@ -121,12 +132,17 @@ function addMetadata({ types: t }) {
 
         const beforeEachExpression = t.expressionStatement(
           t.callExpression(
-            t.memberExpression(t.identifier(hooksIdentifier), t.identifier('beforeEach')),
+            t.memberExpression(
+              t.identifier(hooksIdentifier),
+              t.identifier('beforeEach')
+            ),
             [beforeEachFunc]
           )
         );
 
-        moduleFunction.get('body').unshiftContainer('body', beforeEachExpression);
+        moduleFunction
+          .get('body')
+          .unshiftContainer('body', beforeEachExpression);
       },
     },
   };
