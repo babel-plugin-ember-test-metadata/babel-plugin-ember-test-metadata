@@ -10,7 +10,7 @@ async function classic(project) {
     'ember-cli-build.js': `'use strict';
 
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
-const { getProjectInfo } = require('babel-plugin-ember-test-metadata/utils')
+const { getProjectInfo } = require('babel-plugin-ember-test-metadata/utils');
 
 module.exports = function (defaults) {
   let app = new EmberApp(defaults, {
@@ -30,84 +30,98 @@ module.exports = function (defaults) {
   return app.toTree();
 };
 `,
+    tests: {
+      unit: getTestFiles(
+        'with-hooks-test.js',
+        'without-hooks-test.js',
+        'with-multiple-modules-test.js'
+      ),
+    },
   });
 }
 
-// async function classicInRepoAddon(project) {
-//   await classic(project);
-//   await addInRepoAddon(project, 'fake-addon');
-// }
+async function classicInRepoAddon(project) {
+  await classic(project);
+  await addInRepoAddon(project, 'fake-addon');
+}
 
-// async function embroider(project) {
-//   project.linkDependency('@embroider/core', {
-//     baseDir: __dirname,
-//   });
-//   project.linkDependency('@embroider/compat', {
-//     baseDir: __dirname,
-//   });
-//   project.linkDependency('@embroider/webpack', {
-//     baseDir: __dirname,
-//   });
-//   project.linkDependency('webpack', {
-//     baseDir: __dirname,
-//   });
+async function embroider(project) {
+  project.linkDependency('@embroider/core', {
+    baseDir: __dirname,
+  });
+  project.linkDependency('@embroider/compat', {
+    baseDir: __dirname,
+  });
+  project.linkDependency('@embroider/webpack', {
+    baseDir: __dirname,
+  });
+  project.linkDependency('webpack', {
+    baseDir: __dirname,
+  });
 
-//   merge(project.files, {
-//     'ember-cli-build.js': `'use strict';
+  merge(project.files, {
+    'ember-cli-build.js': `'use strict';
 
-// const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
-// module.exports = function (defaults) {
-//   let app = new EmberApp(defaults, {
-//     babel: {
-//       plugins: [
-//         [
-//           require.resolve('babel-plugin-ember-test-metadata'),
-//           { enabled: true }
-//         ]
-//       ],
-//     }
-//   });
+module.exports = function (defaults) {
+  let app = new EmberApp(defaults, {
+    babel: {
+      plugins: [
+        [
+          require.resolve('babel-plugin-ember-test-metadata'),
+          { enabled: true }
+        ]
+      ],
+    }
+  });
 
-//   const { Webpack } = require('@embroider/webpack');
-//   return require('@embroider/compat').compatBuild(app, Webpack);
-// };
-// `,
-//   });
-// }
+  const { Webpack } = require('@embroider/webpack');
+  return require('@embroider/compat').compatBuild(app, Webpack);
+};
+`,
+    tests: {
+      unit: getTestFiles(
+        'with-hooks-assert-includes-test.js',
+        'without-hooks-assert-includes-test.js',
+        'with-multiple-modules-assert-includes-test.js'
+      ),
+    },
+  });
+}
 
-// async function embroiderInRepoAddon(project) {
-//   await embroider(project);
-//   await addInRepoAddon(project, 'fake-addon');
-// }
+async function embroiderInRepoAddon(project) {
+  await embroider(project);
+  await addInRepoAddon(project, 'fake-addon');
+}
 
-// async function addInRepoAddon(project, name, version = '0.0.0') {
-//   project.linkDependency('ember-add-in-repo-tests', {
-//     baseDir: __dirname,
-//   });
+async function addInRepoAddon(project, name, version = '0.0.0') {
+  project.linkDependency('ember-add-in-repo-tests', {
+    baseDir: __dirname,
+  });
 
-//   project.pkg['ember-addon'] = {
-//     paths: [`lib/${name}`],
-//   };
+  project.pkg['ember-addon'] = {
+    paths: [`lib/${name}`],
+  };
 
-//   merge(project.files, {
-//     lib: {
-//       [name]: {
-//         'package.json': {
-//           name,
-//           version,
-//           keywords: ['ember-addon'],
-//         },
-//         'index.js': `module.exports = {
-//           name: require("./package").name,
-//         };`,
-//         tests: {
-//           unit: getTestFiles('with-hooks-test.js'),
-//         },
-//       },
-//     },
-//   });
-// }
+  merge(project.files, {
+    lib: {
+      [name]: {
+        'package.json': {
+          name,
+          version,
+          keywords: ['ember-addon'],
+        },
+        'index.js': `module.exports = {
+          name: require("./package").name,
+        };`,
+        tests: {
+          unit: getTestFiles('with-hooks-assert-includes-test.js'),
+        },
+      },
+    },
+  });
+}
 
 function getTestFiles(...files) {
   return files.reduce((testFiles, file) => {
@@ -130,23 +144,13 @@ function baseApp() {
 Scenarios.fromProject(baseApp)
   .expand({
     classic,
-    // classicInRepoAddon,
-    // embroider,
-    // embroiderInRepoAddon,
+    classicInRepoAddon,
+    embroider,
+    embroiderInRepoAddon,
   })
   .map('app scenarios', (project) => {
     project.linkDependency('babel-plugin-ember-test-metadata', {
       baseDir: __dirname,
-    });
-
-    merge(project.files, {
-      tests: {
-        unit: getTestFiles(
-          'with-hooks-test.js',
-          'without-hooks-test.js',
-          'with-multiple-modules-test.js'
-        ),
-      },
     });
   })
   .forEachScenario((scenario) => {
