@@ -64,18 +64,24 @@ describe('Unit | utils | getNormalizedFilePath', () => {
       filename: path.join('this', 'is', 'not-an-embroider', 'path'),
     },
   };
+  const projectInfo = {
+    pkg: {
+      name: 'test-app',
+      'ember-addon': {},
+    },
+  };
 
   it('returns stripped file path as expected', () => {
-    expect(getNormalizedFilePath(fileOpts.embroiderBuildPath)).toBe(
+    expect(getNormalizedFilePath(fileOpts.embroiderBuildPath, projectInfo)).toBe(
       path.join('tests', 'acceptance', 'my-test.js')
     );
-    expect(getNormalizedFilePath(fileOpts.embroiderBuildPathTwoEmbroiderTokens)).toBe(
+    expect(getNormalizedFilePath(fileOpts.embroiderBuildPathTwoEmbroiderTokens, projectInfo)).toBe(
       path.join('tests', 'acceptance', 'my-test.js')
     );
   });
 
   it('returns unmodified file path when path does not include "embroider" as a segment', () => {
-    expect(getNormalizedFilePath(fileOpts.normalFilePath)).toBe(
+    expect(getNormalizedFilePath(fileOpts.normalFilePath, projectInfo)).toBe(
       path.join('this', 'is', 'not-an-embroider', 'path')
     );
   });
