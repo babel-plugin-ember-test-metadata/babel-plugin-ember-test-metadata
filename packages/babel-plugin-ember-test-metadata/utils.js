@@ -33,6 +33,11 @@ function getNodeProperty(node, path) {
   return property;
 }
 
+/**
+ * Function to parse defaults.project and only return info to be used by the plugin
+ * @param {object} project Ember defaults.project
+ * @returns {object} Contains project name and ember-addon path info
+ */
 function getProjectInfo(project) {
   const parsedProjectInfo = {};
 
