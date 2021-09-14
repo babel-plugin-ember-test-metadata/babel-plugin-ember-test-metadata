@@ -111,7 +111,10 @@ function addMetadata({ types: t }) {
           ),
         ]);
 
-        const relativeFilePath = getNormalizedFilePath(state.file.opts, state.opts.projectInfo);
+        const relativeFilePath = getNormalizedFilePath(
+          state.file.opts,
+          state.opts.projectInfo
+        );
 
         const testMetadataAssignment = t.expressionStatement(
           t.assignmentExpression(
