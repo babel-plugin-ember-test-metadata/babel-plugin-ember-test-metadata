@@ -1,5 +1,4 @@
 const path = require('path');
-const EMBROIDER = 'embroider';
 
 /**
  * Utility to get a property from a given path
@@ -36,6 +35,10 @@ function getNodeProperty(node, path) {
 /**
  * Function to parse defaults.project and only return info to be used by the plugin
  * @param {object} project Ember defaults.project
+ * @param {string} project.pkg - The package of the parent project.
+ * @param {string} project.pkg.name - The name of the parent project.
+ * @param {object} project.pkg['ember-addon'] - Ember-addon info.
+ * @param {array} project.pkg['ember-addon'].paths - Ember-addon path strings.
  * @returns {object} Contains project name and ember-addon path info
  */
 function getProjectConfiguration(project) {
@@ -67,8 +70,10 @@ function _getParsedClassicFilepath(pathSegments, projectConfiguration) {
 function _getParsedEmbroiderFilepath(pathSegments) {
   const RELATIVE_PATH_ROOT = 2;
 
-  // Strip out Embroider prefix (embroider/nnnnnn) segments from file path
-  pathSegments.splice(0, pathSegments.lastIndexOf(EMBROIDER) + RELATIVE_PATH_ROOT);
+  // A typical Embroider pathSegments array would look something like:
+  // ['private', 'var', 'some-hash', 'embroider', 'another-hash', 'tests', 'acceptance', ...]
+  // This strips everything from the first segment up to and including 'another-hash',
+  pathSegments.splice(0, pathSegments.lastIndexOf('embroider') + RELATIVE_PATH_ROOT);
 
   return pathSegments.join(path.sep);
 }
@@ -82,7 +87,7 @@ function _getParsedEmbroiderFilepath(pathSegments) {
 function getNormalizedFilePath(fileOpts, projectConfiguration) {
   let { root, filename } = fileOpts;
   const pathSegments = filename.split(path.sep);
-  const isEmbroider = pathSegments.includes(EMBROIDER);
+  const isEmbroider = pathSegments.includes('embroider');
 
   if (isEmbroider) {
     filename = _getParsedEmbroiderFilepath(pathSegments);

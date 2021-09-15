@@ -96,34 +96,26 @@ describe('getNormalizedFilePath', () => {
 });
 
 describe('_getParsedClassicFilepath', () => {
-  const projectConfiguration = {
-    pkg: {
-      name: 'test-app',
-      'ember-addon': {},
-    },
-  };
-  const pathSegments = ['test-app', 'tests', 'acceptance', 'my-test.js'];
-  const monoRepoProjectConfiguration = {
-    pkg: {
-      name: `@parent-repo-name${path.sep}test-app`,
-      'ember-addon': {},
-    },
-  };
-  const monoRepoPathSegments = [
-    '@parent-repo-name',
-    'test-app',
-    'tests',
-    'acceptance',
-    'my-test.js',
-  ];
-
   it('returns file path from classic build correctly', () => {
-    expect(_getParsedClassicFilepath(pathSegments, projectConfiguration)).toBe(
-      path.join('tests', 'acceptance', 'my-test.js')
-    );
-    expect(_getParsedClassicFilepath(monoRepoPathSegments, monoRepoProjectConfiguration)).toBe(
-      path.join('tests', 'acceptance', 'my-test.js')
-    );
+    expect(
+      _getParsedClassicFilepath(['test-app', 'tests', 'acceptance', 'my-test.js'], {
+        pkg: {
+          name: 'test-app',
+          'ember-addon': {},
+        },
+      })
+    ).toBe(path.join('tests', 'acceptance', 'my-test.js'));
+    expect(
+      _getParsedClassicFilepath(
+        ['@parent-repo-name', 'test-app', 'tests', 'acceptance', 'my-test.js'],
+        {
+          pkg: {
+            name: `@parent-repo-name${path.sep}test-app`,
+            'ember-addon': {},
+          },
+        }
+      )
+    ).toBe(path.join('tests', 'acceptance', 'my-test.js'));
   });
 });
 
