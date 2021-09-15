@@ -2,11 +2,11 @@ const path = require('path');
 const {
   getNodeProperty,
   getNormalizedFilePath,
-  getParsedClassicFilepath,
-  getParsedEmbroiderFilepath,
+  _getParsedClassicFilepath,
+  _getParsedEmbroiderFilepath,
 } = require('../utils');
 
-describe('Unit | utils | getNodeProperty', () => {
+describe('getNodeProperty', () => {
   it('returns property as expected', () => {
     const mockNode = {
       system: {
@@ -31,7 +31,7 @@ describe('Unit | utils | getNodeProperty', () => {
   });
 });
 
-describe('Unit | utils | getNormalizedFilePath', () => {
+describe('getNormalizedFilePath', () => {
   const fileOpts = {
     embroiderBuildPath: {
       root: '',
@@ -48,7 +48,7 @@ describe('Unit | utils | getNormalizedFilePath', () => {
         'my-test.js'
       ),
     },
-    embroiderBuildPathTwoEmbroiderTokens: {
+    embroiderBuildPathTwoEmbroiderPathSegments: {
       root: '',
       filename: path.join(
         'private',
@@ -69,7 +69,7 @@ describe('Unit | utils | getNormalizedFilePath', () => {
       filename: path.join('this', 'is', 'not-an-embroider', 'path'),
     },
   };
-  const projectInfo = {
+  const projectConfiguration = {
     pkg: {
       name: 'test-app',
       'ember-addon': {},
@@ -77,48 +77,57 @@ describe('Unit | utils | getNormalizedFilePath', () => {
   };
 
   it('returns stripped file path as expected', () => {
-    expect(getNormalizedFilePath(fileOpts.embroiderBuildPath, projectInfo)).toBe(
+    expect(getNormalizedFilePath(fileOpts.embroiderBuildPath, projectConfiguration)).toBe(
       path.join('tests', 'acceptance', 'my-test.js')
     );
-    expect(getNormalizedFilePath(fileOpts.embroiderBuildPathTwoEmbroiderTokens, projectInfo)).toBe(
-      path.join('tests', 'acceptance', 'my-test.js')
-    );
+    expect(
+      getNormalizedFilePath(
+        fileOpts.embroiderBuildPathTwoEmbroiderPathSegments,
+        projectConfiguration
+      )
+    ).toBe(path.join('tests', 'acceptance', 'my-test.js'));
   });
 
   it('returns unmodified file path when path does not include "embroider" as a segment', () => {
-    expect(getNormalizedFilePath(fileOpts.normalFilePath, projectInfo)).toBe(
+    expect(getNormalizedFilePath(fileOpts.normalFilePath, projectConfiguration)).toBe(
       path.join('this', 'is', 'not-an-embroider', 'path')
     );
   });
 });
 
-describe('Unit | utils | getParsedClassicFilepath', () => {
-  const projectInfo = {
+describe('_getParsedClassicFilepath', () => {
+  const projectConfiguration = {
     pkg: {
       name: 'test-app',
       'ember-addon': {},
     },
   };
-  const tokens = ['test-app', 'tests', 'acceptance', 'my-test.js'];
-  const monoRepoProjectInfo = {
+  const pathSegments = ['test-app', 'tests', 'acceptance', 'my-test.js'];
+  const monoRepoProjectConfiguration = {
     pkg: {
       name: `@parent-repo-name${path.sep}test-app`,
       'ember-addon': {},
     },
   };
-  const monoRepoTokens = ['@parent-repo-name', 'test-app', 'tests', 'acceptance', 'my-test.js'];
+  const monoRepoPathSegments = [
+    '@parent-repo-name',
+    'test-app',
+    'tests',
+    'acceptance',
+    'my-test.js',
+  ];
 
   it('returns file path from classic build correctly', () => {
-    expect(getParsedClassicFilepath(tokens, projectInfo)).toBe(
+    expect(_getParsedClassicFilepath(pathSegments, projectConfiguration)).toBe(
       path.join('tests', 'acceptance', 'my-test.js')
     );
-    expect(getParsedClassicFilepath(monoRepoTokens, monoRepoProjectInfo)).toBe(
+    expect(_getParsedClassicFilepath(monoRepoPathSegments, monoRepoProjectConfiguration)).toBe(
       path.join('tests', 'acceptance', 'my-test.js')
     );
   });
 });
 
-describe('Unit | utils | getParsedEmbroiderFilepath', () => {
+describe('_getParsedEmbroiderFilepath', () => {
   const filename = path.join(
     'private',
     'var',
@@ -131,9 +140,11 @@ describe('Unit | utils | getParsedEmbroiderFilepath', () => {
     'acceptance',
     'my-test.js'
   );
-  const tokens = filename.split(path.sep);
+  const pathSegments = filename.split(path.sep);
 
   it('returns file path from classic build correctly', () => {
-    expect(getParsedEmbroiderFilepath(tokens)).toBe(path.join('tests', 'acceptance', 'my-test.js'));
+    expect(_getParsedEmbroiderFilepath(pathSegments)).toBe(
+      path.join('tests', 'acceptance', 'my-test.js')
+    );
   });
 });

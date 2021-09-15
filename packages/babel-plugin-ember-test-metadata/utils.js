@@ -38,11 +38,11 @@ function getNodeProperty(node, path) {
  * @param {object} project Ember defaults.project
  * @returns {object} Contains project name and ember-addon path info
  */
-function getProjectInfo(project) {
-  const parsedProjectInfo = {};
+function getProjectConfiguration(project) {
+  const parsedProjectConfiguration = {};
 
   if (project) {
-    parsedProjectInfo.pkg = {
+    parsedProjectConfiguration.pkg = {
       name: project.pkg.name,
       'ember-addon': {
         paths: project.pkg['ember-addon'].paths,
@@ -50,51 +50,44 @@ function getProjectInfo(project) {
     };
   }
 
-  return parsedProjectInfo;
+  return parsedProjectConfiguration;
 }
 
-/**
- * Strip out project name prefix segement(s) from file path
- * @param {array} tokens File path segments
- * @param {object} projectInfo Contains project name, ember-addon path info
- * @returns {string} A joined file path, e.g. tests/acceptance/my-test.js
- */
-function getParsedClassicFilepath(tokens, projectInfo) {
-  const projectNameTokens = projectInfo.pkg.name.split(path.sep);
+function _getParsedClassicFilepath(pathSegments, projectConfiguration) {
+  const projectNamePathSeparators = projectConfiguration.pkg.name.split(path.sep);
 
-  tokens.splice(0, tokens.indexOf(projectNameTokens[0]) + projectNameTokens.length);
+  pathSegments.splice(
+    0,
+    pathSegments.indexOf(projectNamePathSeparators[0]) + projectNamePathSeparators.length
+  );
 
-  return tokens.join(path.sep);
+  return pathSegments.join(path.sep);
 }
 
-/**
- * Strip out Embroider prefix (embroider/nnnnnn) segements from file path
- * @param {array} tokens File path segments
- * @returns {string} A joined file path, e.g. tests/acceptance/my-test.js
- */
-function getParsedEmbroiderFilepath(tokens) {
+function _getParsedEmbroiderFilepath(pathSegments) {
   const RELATIVE_PATH_ROOT = 2;
 
-  tokens.splice(0, tokens.lastIndexOf(EMBROIDER) + RELATIVE_PATH_ROOT);
+  // Strip out Embroider prefix (embroider/nnnnnn) segments from file path
+  pathSegments.splice(0, pathSegments.lastIndexOf(EMBROIDER) + RELATIVE_PATH_ROOT);
 
-  return tokens.join(path.sep);
+  return pathSegments.join(path.sep);
 }
 
 /**
  * Get a normalized file path, based on whether the app build is classic or with Embroider
  * @param {object} fileOpts Babel state.file.opts which include root and filename props
- * @param {object} projectInfo Contains project name, ember-addon path info
+ * @param {object} projectConfiguration Contains project name, ember-addon path info
  * @returns {string} E.g. tests/acceptance/my-test.js
  */
-function getNormalizedFilePath(fileOpts, projectInfo) {
+function getNormalizedFilePath(fileOpts, projectConfiguration) {
   let { root, filename } = fileOpts;
-  const tokens = filename.split(path.sep);
-  const isEmbroider = tokens.includes(EMBROIDER);
+  const pathSegments = filename.split(path.sep);
+  const isEmbroider = pathSegments.includes(EMBROIDER);
 
   if (isEmbroider) {
-    filename = getParsedEmbroiderFilepath(tokens);
+    filename = _getParsedEmbroiderFilepath(pathSegments);
   } else {
-    filename = getParsedClassicFilepath(tokens, projectInfo);
+    filename = _getParsedClassicFilepath(pathSegments, projectConfiguration);
   }
 
   return path.relative(root, filename);
@@ -103,7 +96,7 @@ function getNormalizedFilePath(fileOpts, projectInfo) {
 module.exports = {
   getNodeProperty,
   getNormalizedFilePath,
-  getProjectInfo,
-  getParsedClassicFilepath,
-  getParsedEmbroiderFilepath,
+  getProjectConfiguration,
+  _getParsedClassicFilepath,
+  _getParsedEmbroiderFilepath,
 };
