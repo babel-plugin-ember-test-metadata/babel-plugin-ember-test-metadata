@@ -89,11 +89,7 @@ function getNormalizedFilePath(fileOpts, projectConfiguration) {
   const pathSegments = filename.split(path.sep);
   const isEmbroider = pathSegments.includes('embroider');
 
-  if (isEmbroider) {
-    filename = _getParsedEmbroiderFilepath(pathSegments);
-  } else {
-    filename = _getParsedClassicFilepath(pathSegments, projectConfiguration);
-  }
+    filename = isEmbroider ? _getParsedEmbroiderFilepath(pathSegments) : _getParsedClassicFilepath(pathSegments, projectConfiguration);
 
   return path.relative(root, filename);
 }
