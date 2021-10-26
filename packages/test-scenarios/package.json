@@ -14,7 +14,7 @@
     "@embroider/webpack": "^0.44.1",
     "babel-plugin-ember-test-metadata": "2.0.0",
     "ember-add-in-repo-tests": "2.0.0-beta.0",
-    "webpack": "^5.52.0"
+    "webpack": "^5.60.0"
   },
   "scripts": {
     "test": "jest"
