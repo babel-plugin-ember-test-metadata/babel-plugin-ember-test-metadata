@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "private": true,
   "dependencies": {
-    "jest": "^27.1.1",
+    "jest": "^27.4.2",
     "lodash": "^4.17.21",
     "scenario-tester": "^1.0.2"
   },
