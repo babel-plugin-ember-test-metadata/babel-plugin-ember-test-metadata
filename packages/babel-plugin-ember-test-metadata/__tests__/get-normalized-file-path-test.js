@@ -47,6 +47,21 @@ describe('getNormalizedFilePath', () => {
 
       expect(normalizedFilePath).toEqual(expectedPath);
     });
+
+    it('returns the filepath with the packages prefix', () => {
+      const filePath =
+        '/Users/tester/workspace/personal/test-bed/classic/classic/packages/addons/example/tests/acceptance/foo-test.js';
+      const expectedPath = 'packages/addons/example/tests/acceptance/foo-test.js';
+      const opts = {
+        filename: filePath,
+        root: '/Users/tester/workspace/personal/test-bed/classic',
+        packageName: 'classic',
+      };
+
+      const normalizedFilePath = getNormalizedFilePath(opts);
+
+      expect(normalizedFilePath).toEqual(expectedPath);
+    });
   });
 
   describe('embroider', () => {
@@ -55,6 +70,21 @@ describe('getNormalizedFilePath', () => {
     it('returns the normalized filepath for app tests', () => {
       const expectedPath = `tests/acceptance/foo-test.js`;
       const filePath = `${appRoot}/tests/acceptance/foo-test.js`;
+      const opts = {
+        filename: filePath,
+        root: appRoot,
+        packageName: 'example-app',
+        isUsingEmbroider: true,
+      };
+
+      const normalizedFilePath = getNormalizedFilePath(opts);
+
+      expect(normalizedFilePath).toEqual(expectedPath);
+    });
+
+    it('returns the filepath with the packages prefix', () => {
+      const filePath = `${appRoot}/packages/addons/example/tests/acceptance/foo-test.js`;
+      const expectedPath = 'packages/addons/example/tests/acceptance/foo-test.js';
       const opts = {
         filename: filePath,
         root: appRoot,
