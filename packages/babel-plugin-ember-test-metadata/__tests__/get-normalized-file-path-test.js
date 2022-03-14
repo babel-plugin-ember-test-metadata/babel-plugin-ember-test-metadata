@@ -4,12 +4,28 @@ describe('getNormalizedFilePath', () => {
   describe('classic', () => {
     const appRoot = '/Users/tester/workspace/personal/test-bed/classic';
 
+    it('returns the normalized filepath with no sourceFileName', () => {
+      const filePath =
+        '/Users/tester/workspace/personal/test-bed/classic/classic/tests/acceptance/foo-test.js';
+      const expectedPath = 'tests/acceptance/foo-test.js';
+      const opts = {
+        filename: filePath,
+        root: '/Users/tester/workspace/personal/test-bed/classic',
+        packageName: 'classic',
+      };
+
+      const normalizedFilePath = getNormalizedFilePath(opts);
+
+      expect(normalizedFilePath).toEqual(expectedPath);
+    });
+
     it('returns the normalized filepath', () => {
       const filePath =
         '/Users/tester/workspace/personal/test-bed/classic/classic/tests/acceptance/foo-test.js';
       const expectedPath = 'tests/acceptance/foo-test.js';
       const opts = {
         filename: filePath,
+        sourceFileName: 'tests/acceptance/foo-test.js',
         root: '/Users/tester/workspace/personal/test-bed/classic',
         packageName: 'classic',
       };
@@ -25,6 +41,7 @@ describe('getNormalizedFilePath', () => {
       const expectedPath = 'tests/acceptance/foo-test.js';
       const opts = {
         filename: filePath,
+        sourceFileName: 'tests/acceptance/foo-test.js',
         root: '/Users/tester/workspace/personal/test-bed/classic',
         packageName: 'classic',
       };
@@ -36,9 +53,10 @@ describe('getNormalizedFilePath', () => {
 
     it('returns the normalized filepath with the addon name', () => {
       const filePath = `${appRoot}/tests/ember-add-in-repo-tests/lib/bar/tests/acceptance/foo-test.js`;
-      const expectedPath = `lib/bar/tests/acceptance/foo-test.js`;
+      const expectedPath = `bar/tests/acceptance/foo-test.js`;
       const opts = {
         filename: filePath,
+        sourceFileName: `bar/tests/acceptance/foo-test.js`,
         root: appRoot,
         packageName: 'classic',
       };
@@ -57,6 +75,7 @@ describe('getNormalizedFilePath', () => {
       const filePath = `${appRoot}/tests/acceptance/foo-test.js`;
       const opts = {
         filename: filePath,
+        sourceFileName: `tests/acceptance/foo-test.js`,
         root: appRoot,
         packageName: 'example-app',
         isUsingEmbroider: true,
@@ -72,6 +91,7 @@ describe('getNormalizedFilePath', () => {
       const expectedPath = `tests/acceptance/foo-test.js`;
       const opts = {
         filename: filePath,
+        sourceFileName: `tests/acceptance/foo-test.js`,
         root: appRoot,
         packageName: 'example-app',
         isUsingEmbroider: true,
@@ -84,9 +104,10 @@ describe('getNormalizedFilePath', () => {
 
     it('returns the normalized filepath with the addon name for addon tests', () => {
       const filePath = `${appRoot}/tests/ember-add-in-repo-tests/lib/bar/tests/acceptance/foo-test.js`;
-      const expectedPath = `lib/bar/tests/acceptance/foo-test.js`;
+      const expectedPath = `tests/acceptance/foo-test.js`;
       const opts = {
         filename: filePath,
+        sourceFileName: `tests/acceptance/foo-test.js`,
         root: appRoot,
         packageName: 'example-app',
         isUsingEmbroider: true,
