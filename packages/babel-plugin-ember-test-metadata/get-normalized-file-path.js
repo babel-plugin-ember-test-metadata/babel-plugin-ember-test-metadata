@@ -12,7 +12,9 @@ const path = require('path');
  * @param {object} opts Babel state.file.opts which include root and filename props
  * @returns {string} E.g. tests/acceptance/my-test.js
  */
-function getNormalizedFilePath({ packageName, isUsingEmbroider, filename, root }) {
+function getNormalizedFilePath({ packageName, isUsingEmbroider, filename, root, sourceFileName }) {
+  if (sourceFileName) { return sourceFileName }
+
   if (!isUsingEmbroider) {
     if (filename.includes('ember-add-in-repo-tests')) {
       return _getRelativePathForClassicInRepo(filename);
