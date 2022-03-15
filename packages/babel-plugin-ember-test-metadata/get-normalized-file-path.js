@@ -23,7 +23,10 @@ function getNormalizedFilePath({ packageName, isUsingEmbroider, filename, root, 
       return _getRelativePathForClassicInRepo(filename);
     }
 
-    if (sourceFileName && sourceFileName !== 'unknown') {
+    if (sourceFileName &&
+      !path.isAbsolute(sourceFileName) &&
+      !sourceFileName.startsWith(packageName) &&
+      sourceFileName !== 'unknown') {
       return sourceFileName;
     }
     return _getRelativePathForClassic(filename, packageName);
