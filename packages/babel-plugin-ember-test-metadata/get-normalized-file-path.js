@@ -29,6 +29,7 @@ function getNormalizedFilePath({ packageName, isUsingEmbroider, filename, root, 
       sourceFileName !== 'unknown') {
       return sourceFileName;
     }
+
     return _getRelativePathForClassic(filename, packageName);
   } else {
     const rootDirWithBase = path.join(path.parse(root).dir, path.parse(root).base);
