@@ -4,6 +4,22 @@ describe('getNormalizedFilePath', () => {
   describe('classic', () => {
     const appRoot = '/Users/tester/workspace/personal/test-bed/classic';
 
+    it('returns the normalized filepath for workspaces', () => {
+      const filePath =
+        '/Users/tester/workspace/personal/test-bed/classic/extended/tests/acceptance/foo-test.js';
+      const expectedPath = 'packages/extended/tests/acceptance/foo-test.js';
+      const opts = {
+        filename: filePath,
+        root: appRoot,
+        workspaceRoot: 'packages',
+        packageName: 'classic',
+      };
+
+      const normalizedFilePath = getNormalizedFilePath(opts);
+
+      expect(normalizedFilePath).toEqual(expectedPath);
+    });
+
     it('returns the normalized filepath', () => {
       const filePath =
         '/Users/tester/workspace/personal/test-bed/classic/classic/tests/acceptance/foo-test.js';
