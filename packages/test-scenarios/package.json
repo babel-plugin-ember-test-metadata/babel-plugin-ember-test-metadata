@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@babel-plugin-ember-test-metadata/app-template": "2.0.0",
+    "extended": "file:../workspace-template/packages/extended",
     "@embroider/compat": "^0.44.1",
     "@embroider/core": "^0.44.1",
     "@embroider/webpack": "^0.44.1",
