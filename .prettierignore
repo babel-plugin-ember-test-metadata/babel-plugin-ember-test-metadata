@@ -1,4 +1,6 @@
 coverage/
 dist/
+packages/workpace-template
+packages/app-template
 package-lock.json
 package.json

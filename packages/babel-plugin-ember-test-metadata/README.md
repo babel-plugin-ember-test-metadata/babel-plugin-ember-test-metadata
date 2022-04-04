@@ -82,4 +82,33 @@ module.exports = function (defaults) {
 };
 ```
 
+When using yarn workspaces, include the `workspaceRoot` option:
+
+```js
+'use strict';
+
+const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+
+module.exports = function (defaults) {
+  let app = new EmberApp(defaults, {
+    babel: {
+      plugins: [
+        [
+          require.resolve('babel-plugin-ember-test-metadata'),
+          {
+            enabled: !!process.env.BABEL_TEST_METADATA,
+            packageName: defaults.project.pkg.name,
+            workspaceRoot: 'packages',
+          },
+        ],
+      ],
+    },
+  });
+
+  // additional configuration
+
+  return app.toTree();
+};
+```
+
 Set the environment variable `BABEL_TEST_METADATA=true` to enable the plugin to perform its transformations.

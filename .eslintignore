@@ -1,2 +1,4 @@
-packages/**/__tests__/__fixtures__/
+/packages/**/__tests__/__fixtures__/
+/packages/workpace-template/packages/extended/**/*.js
+/packages/app-template/**/*.js
 dist/

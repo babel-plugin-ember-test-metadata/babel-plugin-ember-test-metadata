@@ -1,11 +1,25 @@
 const {
   _getRelativePathForClassic,
+  _getRelativePathForClassicWorkspace,
   _getRelativePathForClassicInRepo,
   _getRelativePathForEmbroider,
   _getRelativePathForEmbroiderInRepo,
 } = require('../get-relative-paths');
 
 describe('get-relative-paths', () => {
+  it('returns relative paths with the workspace prefix for classic projects', () => {
+    const testCases = [
+      {
+        filePath: '/Users/tester/workspace/classic/packages/extended/extended/tests/acceptance/foo-test.js',
+        expected: 'packages/extended/tests/acceptance/foo-test.js',
+      }
+    ];
+
+    testCases.forEach(({ filePath, expected }) => {
+      expect(_getRelativePathForClassicWorkspace(filePath, 'extended', 'packages')).toEqual(expected);
+    });
+  });
+
   it('can return relative paths for classic projects', () => {
     const testCases = [
       {

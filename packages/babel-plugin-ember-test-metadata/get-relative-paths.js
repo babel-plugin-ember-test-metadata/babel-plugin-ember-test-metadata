@@ -6,6 +6,11 @@ function _getRelativePathForClassic(filePath, projectName) {
     .replace(`${projectName}/`, '');
 }
 
+function _getRelativePathForClassicWorkspace(filePath, projectName, workspaceRoot = "") {
+  let relativePath = _getRelativePathForClassic(filePath, projectName);
+  return path.join(workspaceRoot, projectName, relativePath);
+}
+
 function _getRelativePathForClassicInRepo(filePath) {
   const pathSegments = filePath.split(path.sep);
 
@@ -27,6 +32,7 @@ function _getRelativePathForEmbroiderInRepo(filePath) {
 
 module.exports = {
   _getRelativePathForClassic,
+  _getRelativePathForClassicWorkspace,
   _getRelativePathForClassicInRepo,
   _getRelativePathForEmbroider,
   _getRelativePathForEmbroiderInRepo,

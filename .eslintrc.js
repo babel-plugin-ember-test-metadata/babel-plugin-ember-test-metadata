@@ -1,5 +1,6 @@
 module.exports = {
   root: true,
+  ignorePatterns: ['packages/workspace-template/**/*.js', 'packages/app-template/**/*.js'],
   env: {
     browser: false,
     node: true,

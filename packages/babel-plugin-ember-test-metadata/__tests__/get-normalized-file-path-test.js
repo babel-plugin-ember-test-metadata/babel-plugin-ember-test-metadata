@@ -4,6 +4,35 @@ describe('getNormalizedFilePath', () => {
   describe('classic', () => {
     const appRoot = '/Users/tester/workspace/personal/test-bed/classic';
 
+    it('returns the normalized filepath for workspaces', () => {
+      const filePath =
+        '/Users/tester/workspace/personal/test-bed/classic/packages/extended/tests/acceptance/foo-test.js';
+      const expectedPath = 'packages/extended/tests/acceptance/foo-test.js';
+      const opts = {
+        filename: filePath,
+        workspaceRoot: 'packages',
+        packageName: 'extended',
+      };
+
+      const normalizedFilePath = getNormalizedFilePath(opts);
+
+      expect(normalizedFilePath).toEqual(expectedPath);
+    });
+
+    it('returns the normalized filepath for workspaces with duplicated path segments', () => {
+      const filePath = '/Users/tester/workspace/personal/test-bed/classic/packages/extended/extended/tests/acceptance/foo-test.js';
+      const expectedPath = 'packages/extended/tests/acceptance/foo-test.js';
+      const opts = {
+        filename: filePath,
+        workspaceRoot: 'packages',
+        packageName: 'extended',
+      };
+
+      const normalizedFilePath = getNormalizedFilePath(opts);
+
+      expect(normalizedFilePath).toEqual(expectedPath);
+    });
+
     it('returns the normalized filepath', () => {
       const filePath =
         '/Users/tester/workspace/personal/test-bed/classic/classic/tests/acceptance/foo-test.js';
