@@ -20,6 +20,7 @@
     "test": "jest"
   },
   "jest": {
+    "maxWorkers": 1,
     "testEnvironment": "node",
     "testPathIgnorePatterns": [
       "/__fixtures__/"

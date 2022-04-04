@@ -1,0 +1,8 @@
+{
+  "name": "@babel-plugin-ember-test-metadata/workspace-template",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
