@@ -14,7 +14,7 @@
     "lint": "eslint .",
     "test": "npm-run-all lint test:*",
     "test:plugin": "yarn workspace babel-plugin-ember-test-metadata test",
-    "test:scenarios": "cd packages/test-scenarios && yarn test"
+    "test:scenarios": "yarn workspace @babel-plugin-ember-test-metadata/test-scenarios test"
   },
   "devDependencies": {
     "eslint": "^7.28.0",
