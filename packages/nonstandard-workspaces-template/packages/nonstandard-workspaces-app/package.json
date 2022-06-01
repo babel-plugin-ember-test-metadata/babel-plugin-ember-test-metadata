@@ -1,5 +1,5 @@
 {
-  "name": "@babel-plugin-ember-test-metadata/nonstandard-workspaces-app",
+  "name": "nonstandard-workspaces-app",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

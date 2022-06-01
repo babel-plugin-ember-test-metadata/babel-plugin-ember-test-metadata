@@ -1,5 +1,5 @@
 const { Scenarios, Project } = require('scenario-tester');
-const { dirname, join } = require('path');
+const { dirname, join, sep } = require('path');
 const { readFileSync } = require('fs');
 const { merge } = require('lodash');
 
@@ -212,6 +212,11 @@ function nonStandardWorkspacesApp() {
 
 
 async function nonStandardWorkspace(project) {
+  project.writeSync();
+
+  const { baseDir } = project;
+  const projectDir = baseDir.split(sep).pop();
+
   merge(project.files, {
     packages: {
       'nonstandard-workspaces-app': {
@@ -227,7 +232,7 @@ module.exports = function (defaults) {
           require.resolve('babel-plugin-ember-test-metadata'),
           {
             enabled: true,
-            packageName: defaults.project.pkg.name,
+            packageName: '${projectDir}',
           }
         ]
       ],
@@ -239,9 +244,9 @@ module.exports = function (defaults) {
 `,
         tests: {
           unit: getTestFiles(
-            'with-hooks-test.js',
-            'without-hooks-test.js',
-            'with-multiple-modules-test.js'
+            'with-hooks-workspace-test.js',
+            'without-hooks-workspace-test.js',
+            'with-multiple-modules-workspace-test.js'
           ),
         },
       }

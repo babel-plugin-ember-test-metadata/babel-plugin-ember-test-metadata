@@ -1,7 +1,7 @@
 import Application from '@ember/application';
 import Resolver from 'ember-resolver';
 import loadInitializers from 'ember-load-initializers';
-import config from '@babel-plugin-ember-test-metadata/nonstandard-workspaces-app/config/environment';
+import config from 'nonstandard-workspaces-app/config/environment';
 
 export default class App extends Application {
   modulePrefix = config.modulePrefix;

@@ -1,5 +1,5 @@
-import Application from '@babel-plugin-ember-test-metadata/nonstandard-workspaces-app/app';
-import config from '@babel-plugin-ember-test-metadata/nonstandard-workspaces-app/config/environment';
+import Application from 'nonstandard-workspaces-app/app';
+import config from 'nonstandard-workspaces-app/config/environment';
 import * as QUnit from 'qunit';
 import { setApplication } from '@ember/test-helpers';
 import { setup } from 'qunit-dom';
