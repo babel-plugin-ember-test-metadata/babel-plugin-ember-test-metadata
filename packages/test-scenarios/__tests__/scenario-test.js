@@ -1,5 +1,5 @@
 const { Scenarios, Project } = require('scenario-tester');
-const { dirname, join, sep } = require('path');
+const { basename, dirname, join } = require('path');
 const { readFileSync } = require('fs');
 const { merge } = require('lodash');
 
@@ -174,48 +174,15 @@ Scenarios.fromProject(baseApp)
     });
   });
 
-function workspacesBaseApp() {
-  // eslint-disable-next-line node/no-unpublished-require
-  const dir = dirname(require.resolve('@babel-plugin-ember-test-metadata/workspaces-template/packages/workspaces-app/package.json'));
-  return Project.fromDir(dir, { linkDeps: true })
-}
-
-Scenarios.fromProject(workspacesBaseApp)
-  .expand({ classic })
-  .map('app scenarios', (project) => {
-    project.linkDependency('babel-plugin-ember-test-metadata', {
-      baseDir: __dirname,
-    });
-  }).
-  forEachScenario((scenario) => {
-    describe(scenario.name, () => {
-      let app;
-
-      beforeAll(async () => {
-        app = await scenario.prepare();
-      });
-
-      it('runs tests', async () => {
-        let { output } = await app.execute('node ./node_modules/ember-cli/bin/ember test');
-
-        expect(output).toMatch('# tests 5');
-        expect(output).toMatch('# pass  5');
-      })
-    })
-  });
-
 function nonStandardWorkspacesApp() {
   // eslint-disable-next-line node/no-unpublished-require
   const dir = dirname(require.resolve('@babel-plugin-ember-test-metadata/nonstandard-workspaces-template/package.json'));
   return Project.fromDir(dir, { linkDeps: true })
 }
 
-
 async function nonStandardWorkspace(project) {
   project.writeSync();
-
-  const { baseDir } = project;
-  const projectDir = baseDir.split(sep).pop();
+  const projectDir = basename(project.baseDir);
 
   merge(project.files, {
     packages: {
