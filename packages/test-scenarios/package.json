@@ -6,7 +6,7 @@
     "fs-extra": "^10.1.0",
     "jest": "^27.1.1",
     "lodash": "^4.17.21",
-    "scenario-tester": "^1.0.2"
+    "scenario-tester": "^2.1.2"
   },
   "devDependencies": {
     "@babel-plugin-ember-test-metadata/app-template": "3.0.0",
