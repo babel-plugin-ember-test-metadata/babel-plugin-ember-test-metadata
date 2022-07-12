@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "fs-extra": "^10.1.0",
-    "jest": "^27.1.1",
+    "jest": "^28.1.2",
     "lodash": "^4.17.21",
     "scenario-tester": "^2.1.2"
   },
