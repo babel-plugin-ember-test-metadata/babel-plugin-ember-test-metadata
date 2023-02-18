@@ -18,10 +18,11 @@ const {
  * @returns {string} E.g. tests/acceptance/my-test.js
  */
 function getNormalizedFilePath({ packageName, getCustomNormalizedFilePath, isUsingEmbroider, projectRoot, filename, root }) {
-  if (typeof getCustomNormalizedFilePath === 'function') {
+  if (getCustomNormalizedFilePath) {
+    const customNormalizedFilePath = require(getCustomNormalizedFilePath);
     const options = { packageName, isUsingEmbroider, projectRoot, filename, root };
   
-    return getCustomNormalizedFilePath(options);
+    return customNormalizedFilePath(options);
   } else if (!isUsingEmbroider) {
     if (filename.includes('ember-add-in-repo-tests')) {
       return _getRelativePathForClassicInRepo(filename);
