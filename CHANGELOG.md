@@ -1,3 +1,13 @@
+## v3.1.1 (2023-02-21)
+
+#### :rocket: Enhancement
+* `babel-plugin-ember-test-metadata`
+  * [#233](https://github.com/babel-plugin-ember-test-metadata/babel-plugin-ember-test-metadata/pull/233) feat: add custom function as a babel option to normalize test file path ([@zhanwang626](https://github.com/zhanwang626))
+
+#### Committers: 1
+- Zhan Wang ([@zhanwang626](https://github.com/zhanwang626))
+
+
 ## v3.0.1 (2022-08-24)
 
 #### :bug: Bug Fix

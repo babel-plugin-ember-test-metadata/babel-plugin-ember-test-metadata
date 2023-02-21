@@ -1,6 +1,6 @@
 {
   "name": "@babel-plugin-ember-test-metadata/workspaces-template",
-  "version": "3.0.1",
+  "version": "3.1.1",
   "private": true,
   "description": "Small description for @babel-plugin-ember-test-metadata/workspaces-template goes here",
   "repository": "",
