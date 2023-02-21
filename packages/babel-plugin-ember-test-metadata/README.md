@@ -115,14 +115,27 @@ module.exports = function (defaults) {
 
 You can also pass a custom function to normalize the test file path.
 ```js
+/**
+  * Get a normalized file path
+  * @param {string} options.packageName the name of the package as specified in Babel plugin options
+  * @param {boolean} options.isUsingEmbroider whether building using Embroider as specified in Babel plugin options
+  * @param {boolean} options.projectRoot custom relative path to the project's root as specified in Babel plugin options
+  * @param {string} options.filename the absolute perceived path of the file being visited
+  * @param {string} options.root the absolute root project path as seen on disk
+}
+*/
+module.exports = function customNormalizedFilePath(options) {
+    // Custom normalization
+}
+```
+
+
+```js
 'use strict';
 
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function (defaults) {
-  function customNormalizedFilePath(filePath, packageName, projectRoot) {
-    // Custom normalization
-  }
 
   let app = new EmberApp(defaults, {
     babel: {
@@ -133,7 +146,7 @@ module.exports = function (defaults) {
             enabled: !!process.env.BABEL_TEST_METADATA,
             packageName: defaults.project.pkg.name,
             packageRoot: '../..',
-            getCustomNormalizedFilePath: customNormalizedFilePath,
+            getCustomNormalizedFilePath: require.resolve('path/to/your/customNormalizedFilePath/function'),
           },
         ],
       ],

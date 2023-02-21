@@ -1,4 +1,5 @@
 const { join, parse } = require('path');
+const { existsSync } = require('fs');
 const {
   _getRelativePathForClassic,
   _getRelativePathForClassicInRepo,
@@ -18,10 +19,15 @@ const {
  * @returns {string} E.g. tests/acceptance/my-test.js
  */
 function getNormalizedFilePath({ packageName, getCustomNormalizedFilePath, isUsingEmbroider, projectRoot, filename, root }) {
-  if (typeof getCustomNormalizedFilePath === 'function') {
-    const options = { packageName, isUsingEmbroider, projectRoot, filename, root };
-  
-    return getCustomNormalizedFilePath(options);
+  if (getCustomNormalizedFilePath) {
+    if (existsSync(getCustomNormalizedFilePath)) {
+      const customNormalizedFilePath = require(getCustomNormalizedFilePath);
+      const options = { packageName, isUsingEmbroider, projectRoot, filename, root };
+
+      return customNormalizedFilePath(options);
+    } else {
+      throw new Error(`The custom normalized file path function specified in your Babel config does not exist at ${getCustomNormalizedFilePath}`);
+    }
   } else if (!isUsingEmbroider) {
     if (filename.includes('ember-add-in-repo-tests')) {
       return _getRelativePathForClassicInRepo(filename);
