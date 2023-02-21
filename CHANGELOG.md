@@ -4,6 +4,10 @@
 * `babel-plugin-ember-test-metadata`
   * [#233](https://github.com/babel-plugin-ember-test-metadata/babel-plugin-ember-test-metadata/pull/233) feat: add custom function as a babel option to normalize test file path ([@zhanwang626](https://github.com/zhanwang626))
 
+#### :bug: Bug Fix
+* `babel-plugin-ember-test-metadata`
+  * [#235](https://github.com/babel-plugin-ember-test-metadata/babel-plugin-ember-test-metadata/pull/235) Update `getCustomNormalizedFilePath` from a function to a resolved path ([@zhanwang626](https://github.com/zhanwang626))
+
 #### Committers: 1
 - Zhan Wang ([@zhanwang626](https://github.com/zhanwang626))
 
