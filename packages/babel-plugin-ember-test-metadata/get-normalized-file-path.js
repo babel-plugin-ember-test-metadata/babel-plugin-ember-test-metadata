@@ -23,11 +23,11 @@ function getNormalizedFilePath({ packageName, getCustomNormalizedFilePath, isUsi
     if (existsSync(getCustomNormalizedFilePath)) {
       const customNormalizedFilePath = require(getCustomNormalizedFilePath);
       const options = { packageName, isUsingEmbroider, projectRoot, filename, root };
+
+      return customNormalizedFilePath(options);
     } else {
       throw new Error(`The custom normalized file path function specified in your Babel config does not exist at ${getCustomNormalizedFilePath}`);
     }
-  
-    return customNormalizedFilePath(options);
   } else if (!isUsingEmbroider) {
     if (filename.includes('ember-add-in-repo-tests')) {
       return _getRelativePathForClassicInRepo(filename);
