@@ -1,4 +1,5 @@
 const { join, parse } = require('path');
+const { existsSync } = require('fs');
 const {
   _getRelativePathForClassic,
   _getRelativePathForClassicInRepo,
@@ -19,8 +20,12 @@ const {
  */
 function getNormalizedFilePath({ packageName, getCustomNormalizedFilePath, isUsingEmbroider, projectRoot, filename, root }) {
   if (getCustomNormalizedFilePath) {
-    const customNormalizedFilePath = require(getCustomNormalizedFilePath);
-    const options = { packageName, isUsingEmbroider, projectRoot, filename, root };
+    if (existsSync(getCustomNormalizedFilePath)) {
+      const customNormalizedFilePath = require(getCustomNormalizedFilePath);
+      const options = { packageName, isUsingEmbroider, projectRoot, filename, root };
+    } else {
+      throw new Error(`The custom normalized file path function specified in your Babel config does not exist at ${getCustomNormalizedFilePath}`);
+    }
   
     return customNormalizedFilePath(options);
   } else if (!isUsingEmbroider) {
