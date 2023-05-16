@@ -14,7 +14,7 @@ function _getRelativeProjectPath(pathSegments, projectDir, projectRoot) {
 
 function _getRelativePathForClassic(filePath, packageName, projectRoot) {
   const projectDir = _getNormalizedPackageDir(packageName);
-  const pathSegments = filePath.split(sep).filter(item => item !== 'dummy')
+  const pathSegments = filePath.split(sep).filter(segment => segment !== 'dummy')
   const testFilePath = pathSegments
     .splice(pathSegments.lastIndexOf(projectDir) + 1)
     .join(sep);
