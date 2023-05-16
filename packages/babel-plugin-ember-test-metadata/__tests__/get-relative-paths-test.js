@@ -34,6 +34,11 @@ describe('get-relative-paths', () => {
         packageName: '@scoped/classic',
         expected: 'tests/acceptance/foo-test.js',
       },
+      {
+        filePath: '/Users/tester/workspace/foo/classic/classic/dummy/tests/acceptance/subdir/foo-test.js',
+        packageName: 'classic',
+        expected: 'tests/acceptance/subdir/foo-test.js',
+      },
     ];
 
     testCases.forEach(({ filePath, packageName, expected }) => {

@@ -18,6 +18,20 @@ describe('getNormalizedFilePath', () => {
       expect(normalizedFilePath).toEqual(expectedPath);
     });
 
+    it('returns the normalized filepath for ember addon tests', () => {
+      const filePath = `${appRoot}/classic/dummy/tests/acceptance/foo-test.js`;
+      const expectedPath = 'tests/acceptance/foo-test.js';
+      const opts = {
+        filename: filePath,
+        root: appRoot,
+        packageName: 'classic',
+      };
+
+      const normalizedFilePath = getNormalizedFilePath(opts);
+
+      expect(normalizedFilePath).toEqual(expectedPath);
+    });
+
     it('returns the normalized filepath for the in app test', () => {
       const filePath = `${appRoot}/classic/tests/acceptance/foo-test.js`;
       const expectedPath = 'tests/acceptance/foo-test.js';
