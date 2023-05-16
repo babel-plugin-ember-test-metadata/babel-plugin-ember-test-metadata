@@ -1,6 +1,6 @@
 {
   "name": "@babel-plugin-ember-test-metadata/test-scenarios",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "private": true,
   "dependencies": {
     "fs-extra": "^10.1.0",
@@ -9,12 +9,12 @@
     "scenario-tester": "^2.1.2"
   },
   "devDependencies": {
-    "@babel-plugin-ember-test-metadata/app-template": "3.1.1",
-    "@babel-plugin-ember-test-metadata/workspaces-template": "3.1.1",
+    "@babel-plugin-ember-test-metadata/app-template": "3.2.0",
+    "@babel-plugin-ember-test-metadata/workspaces-template": "3.2.0",
     "@embroider/compat": "^0.44.1",
     "@embroider/core": "^0.44.1",
     "@embroider/webpack": "^0.44.1",
-    "babel-plugin-ember-test-metadata": "3.1.1",
+    "babel-plugin-ember-test-metadata": "3.2.0",
     "ember-add-in-repo-tests": "2.0.0",
     "webpack": "^5.52.0"
   },

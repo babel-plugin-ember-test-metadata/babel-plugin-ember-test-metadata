@@ -1,3 +1,13 @@
+## v3.2.0 (2023-05-16)
+
+#### :bug: Bug Fix
+* `babel-plugin-ember-test-metadata`
+  * [#241](https://github.com/babel-plugin-ember-test-metadata/babel-plugin-ember-test-metadata/pull/241) [Bug] Fix test file paths for Ember addon project ([@zhanwang626](https://github.com/zhanwang626))
+
+#### Committers: 1
+- Zhan Wang ([@zhanwang626](https://github.com/zhanwang626))
+
+
 ## v3.1.1 (2023-02-21)
 
 #### :rocket: Enhancement
